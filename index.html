@@ -19,7 +19,7 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1200px;margin:0 auto;padding:16px 20px 60px}
+.wrap{max-width:1300px;margin:0 auto;padding:16px 20px 60px}
 
 header.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding:4px 0 14px}
 .logo-chip{background:linear-gradient(135deg,var(--brand),var(--brand2));border-radius:12px;padding:9px 16px;box-shadow:var(--shadow);display:flex;align-items:center;color:#fff;font-weight:800;font-size:15px;letter-spacing:.4px}
@@ -36,22 +36,24 @@ button:hover{border-color:var(--brand2);color:var(--brand2)}
 .dot.bad{background:var(--bad)}
 .dot.load{background:var(--gold)}
 
-.hero{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px}
+.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:16px}
 .pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 12px;box-shadow:var(--shadow);border-top:3px solid var(--brand2)}
 .pcard.geral{border-top-color:var(--gold);background:linear-gradient(135deg,var(--panel),var(--panel2))}
 .pcard .p-lab{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
 .pcard .p-val{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-top:8px;color:var(--brand)}
 :root[data-theme="dark"] .pcard .p-val{color:var(--ink)}
-.pcard .p-sub{font-size:11.5px;margin-top:8px;color:var(--muted);display:flex;justify-content:space-between}
+.pcard .p-sub{font-size:11.5px;margin-top:6px;color:var(--muted);display:flex;justify-content:space-between}
 .pcard .p-sub b{color:var(--ink);font-weight:700}
+.pcard .p-sub.highlight{border-top:1px dashed var(--line);padding-top:6px;margin-top:8px}
 
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:16px}
 .card h2{font-size:14.5px;margin:0 0 2px;font-weight:800}
 .card .hint{font-size:12px;color:var(--muted);margin-bottom:12px}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
+table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:800}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:800}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+th.mth,td.mth{background:rgba(47,110,168,.05)}
 tr.subtotal td{font-weight:800;background:var(--panel2);border-top:1.5px solid var(--line)}
 tr.subtotal td.tp{color:var(--brand)}
 .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
@@ -63,7 +65,7 @@ tr.subtotal td.tp{color:var(--brand)}
 .grpname .chip{background:var(--brand2);color:#fff;font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.3px}
 
 footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
-@media (max-width:820px){.hero{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:820px){.hero{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -85,7 +87,7 @@ footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
 
   <div class="card">
     <h2>Detalhamento por tipo e empreendimento</h2>
-    <div class="hint">Valores lidos diretamente das colunas F (Total), G (20% de Honorários) e H (Eficiência 30%) da planilha.</div>
+    <div class="hint">Valores lidos da planilha com projeção mensal (considerando negociação em 2 meses).</div>
     <div id="tables"></div>
   </div>
 
@@ -96,6 +98,8 @@ footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
 /* ===================== CONFIG ===================== */
 const SHEET_ID = '1mgYzfjQmpL88q5R5jTlP3kU0i2IwPUcfUPm76e534zw';
 const GID = '0';
+const MESES = 2; // Período da negociação em meses
+
 const CSV_URLS = [
   `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`,
   `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`
@@ -113,9 +117,8 @@ async function fetchSheetCSV(){
       const response = await fetch(url, {cache:'no-store'});
       const text = await response.text();
       const pareceHTML = /<html|accounts\.google\.com|sign in/i.test(text.slice(0,500));
-      console.log('URL:',url,'STATUS:',response.status,'TAMANHO:',text.length);
       if(!response.ok || pareceHTML){
-        lastErr = 'A planilha retornou uma página de login/HTML em vez de CSV. Confirme o compartilhamento como "Qualquer pessoa com o link — Leitor".';
+        lastErr = 'A planilha retornou uma página de login/HTML em vez de CSV. Confirme o compartilhamento como "Qualquer pessoa com el link — Leitor".';
         continue;
       }
       return text;
@@ -175,10 +178,8 @@ function findHeader(matrix){
 /* ===================== MONTA GRUPOS ===================== */
 function buildGroups(matrix){
   const headerRow = findHeader(matrix);
-  console.log('HEADER na linha', headerRow, matrix[headerRow]);
-  console.log('TOTAL DE LINHAS:', matrix.length);
 
-  const groups = []; // [{ tipo, items:[...], subtotal:{...} }]
+  const groups = []; 
   let current = null;
 
   for(let i=headerRow+1;i<matrix.length;i++){
@@ -192,14 +193,19 @@ function buildGroups(matrix){
       groups.push(current);
     }
 
+    const hon20 = parseNumBR(r[6]);
+    const efic30 = parseNumBR(r[7]);
+
     const linha = {
       nome,
       base: parseNumBR(r[2]),
       parcelas: parseNumBR(r[3]),
       encargos: parseNumBR(r[4]),
       total: parseNumBR(r[5]),
-      hon20: parseNumBR(r[6]),
-      efic30: parseNumBR(r[7])
+      hon20: hon20,
+      hon20Mes: hon20 / MESES,
+      efic30: efic30,
+      efic30Mes: efic30 / MESES
     };
 
     if(isTotalRow){
@@ -211,13 +217,18 @@ function buildGroups(matrix){
     current.items.push(linha);
   }
 
-  // fallback: se uma linha "Total" não veio na planilha, soma os itens
   groups.forEach(g => {
     if(!g.subtotal){
       g.subtotal = g.items.reduce((acc,it) => ({
-        base: acc.base+it.base, parcelas: acc.parcelas+it.parcelas, encargos: acc.encargos+it.encargos,
-        total: acc.total+it.total, hon20: acc.hon20+it.hon20, efic30: acc.efic30+it.efic30
-      }), {base:0,parcelas:0,encargos:0,total:0,hon20:0,efic30:0});
+        base: acc.base+it.base, 
+        parcelas: acc.parcelas+it.parcelas, 
+        encargos: acc.encargos+it.encargos,
+        total: acc.total+it.total, 
+        hon20: acc.hon20+it.hon20, 
+        hon20Mes: acc.hon20Mes+it.hon20Mes,
+        efic30: acc.efic30+it.efic30,
+        efic30Mes: acc.efic30Mes+it.efic30Mes
+      }), {base:0,parcelas:0,encargos:0,total:0,hon20:0,hon20Mes:0,efic30:0,efic30Mes:0});
     }
   });
 
@@ -227,29 +238,37 @@ function buildGroups(matrix){
 /* ===================== RENDER ===================== */
 function renderHero(groups){
   const geral = groups.reduce((acc,g) => ({
-    base: acc.base+g.subtotal.base, total: acc.total+g.subtotal.total,
-    hon20: acc.hon20+g.subtotal.hon20, efic30: acc.efic30+g.subtotal.efic30
-  }), {base:0,total:0,hon20:0,efic30:0});
+    base: acc.base+g.subtotal.base, 
+    total: acc.total+g.subtotal.total,
+    hon20: acc.hon20+g.subtotal.hon20, 
+    hon20Mes: acc.hon20Mes+g.subtotal.hon20Mes,
+    efic30: acc.efic30+g.subtotal.efic30,
+    efic30Mes: acc.efic30Mes+g.subtotal.efic30Mes
+  }), {base:0,total:0,hon20:0,hon20Mes:0,efic30:0,efic30Mes:0});
 
   const cards = [];
   
   // Card Geral
   cards.push(`<div class="pcard geral">
-    <div class="p-lab">Potencial Total Geral</div>
+    <div class="p-lab">Potencial Total Geral (2 Meses)</div>
     <div class="p-val">${BRL.format(geral.total)}</div>
-    <div class="p-sub"><span>Honorários 20%</span><b>${BRL.format(geral.hon20)}</b></div>
-    <div class="p-sub"><span>Eficiência 30%</span><b>${BRL.format(geral.efic30)}</b></div>
     <div class="p-sub"><span>Base atual</span><b>${INT.format(geral.base)}</b></div>
+    <div class="p-sub"><span>Honorários 20% (Total)</span><b>${BRL.format(geral.hon20)}</b></div>
+    <div class="p-sub"><span>Eficiência 30% (Total)</span><b>${BRL.format(geral.efic30)}</b></div>
+    <div class="p-sub highlight"><span>Hon. 20% / mês</span><b>${BRL.format(geral.hon20Mes)}</b></div>
+    <div class="p-sub"><span>Efic. 30% / mês</span><b>${BRL.format(geral.efic30Mes)}</b></div>
   </div>`);
 
-  // Cards de cada categoria
+  // Cards das Categorias
   groups.forEach(g => {
     cards.push(`<div class="pcard">
-      <div class="p-lab">${g.tipo}</div>
+      <div class="p-lab">${g.tipo} (2 Meses)</div>
       <div class="p-val">${BRL.format(g.subtotal.total)}</div>
-      <div class="p-sub"><span>Honorários 20%</span><b>${BRL.format(g.subtotal.hon20)}</b></div>
-      <div class="p-sub"><span>Eficiência 30%</span><b>${BRL.format(g.subtotal.efic30)}</b></div>
       <div class="p-sub"><span>Base atual</span><b>${INT.format(g.subtotal.base)}</b></div>
+      <div class="p-sub"><span>Honorários 20% (Total)</span><b>${BRL.format(g.subtotal.hon20)}</b></div>
+      <div class="p-sub"><span>Eficiência 30% (Total)</span><b>${BRL.format(g.subtotal.efic30)}</b></div>
+      <div class="p-sub highlight"><span>Hon. 20% / mês</span><b>${BRL.format(g.subtotal.hon20Mes)}</b></div>
+      <div class="p-sub"><span>Efic. 30% / mês</span><b>${BRL.format(g.subtotal.efic30Mes)}</b></div>
     </div>`);
   });
 
@@ -262,22 +281,39 @@ function renderTables(groups){
   groups.forEach(g => {
     html += `<div class="grpname"><span class="chip">${g.tipo}</span></div>`;
     html += `<div class="tblwrap"><table><thead><tr>
-      <th>Empreendimento</th><th class="num">Base</th><th class="num">Parcelas/Taxas</th>
-      <th class="num">Encargos</th><th class="num">Total</th><th class="num">Honorários 20%</th><th class="num">Eficiência 30%</th>
+      <th>Empreendimento</th>
+      <th class="num">Base</th>
+      <th class="num">Parcelas/Taxas</th>
+      <th class="num">Encargos</th>
+      <th class="num">Total</th>
+      <th class="num">Honorários 20%</th>
+      <th class="num mth">Hon. 20%/mês</th>
+      <th class="num">Eficiência 30%</th>
+      <th class="num mth">Efic. 30%/mês</th>
     </tr></thead><tbody>`;
     g.items.forEach(it => {
       html += `<tr>
-        <td>${it.nome}</td><td class="num">${INT.format(it.base)}</td>
-        <td class="num">${BRL.format(it.parcelas)}</td><td class="num">${BRL.format(it.encargos)}</td>
-        <td class="num">${BRL.format(it.total)}</td><td class="num">${BRL.format(it.hon20)}</td>
+        <td>${it.nome}</td>
+        <td class="num">${INT.format(it.base)}</td>
+        <td class="num">${BRL.format(it.parcelas)}</td>
+        <td class="num">${BRL.format(it.encargos)}</td>
+        <td class="num">${BRL.format(it.total)}</td>
+        <td class="num">${BRL.format(it.hon20)}</td>
+        <td class="num mth">${BRL.format(it.hon20Mes)}</td>
         <td class="num">${BRL.format(it.efic30)}</td>
+        <td class="num mth">${BRL.format(it.efic30Mes)}</td>
       </tr>`;
     });
     html += `<tr class="subtotal">
-      <td class="tp">Total</td><td class="num">${INT.format(g.subtotal.base)}</td>
-      <td class="num">${BRL.format(g.subtotal.parcelas)}</td><td class="num">${BRL.format(g.subtotal.encargos)}</td>
-      <td class="num">${BRL.format(g.subtotal.total)}</td><td class="num">${BRL.format(g.subtotal.hon20)}</td>
+      <td class="tp">Total</td>
+      <td class="num">${INT.format(g.subtotal.base)}</td>
+      <td class="num">${BRL.format(g.subtotal.parcelas)}</td>
+      <td class="num">${BRL.format(g.subtotal.encargos)}</td>
+      <td class="num">${BRL.format(g.subtotal.total)}</td>
+      <td class="num">${BRL.format(g.subtotal.hon20)}</td>
+      <td class="num mth">${BRL.format(g.subtotal.hon20Mes)}</td>
       <td class="num">${BRL.format(g.subtotal.efic30)}</td>
+      <td class="num mth">${BRL.format(g.subtotal.efic30Mes)}</td>
     </tr>`;
     html += '</tbody></table></div>';
   });
