@@ -37,14 +37,34 @@ button:hover{border-color:var(--brand2);color:var(--brand2)}
 .dot.load{background:var(--gold)}
 
 .hero{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:16px}
-.pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 12px;box-shadow:var(--shadow);border-top:3px solid var(--brand2)}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px;box-shadow:var(--shadow);border-top:3px solid var(--brand2)}
 .pcard.geral{border-top-color:var(--gold);background:linear-gradient(135deg,var(--panel),var(--panel2))}
 .pcard .p-lab{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
-.pcard .p-val{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-top:8px;color:var(--brand)}
+.pcard .p-val{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:8px;color:var(--brand)}
 :root[data-theme="dark"] .pcard .p-val{color:var(--ink)}
-.pcard .p-sub{font-size:11.5px;margin-top:6px;color:var(--muted);display:flex;justify-content:space-between}
+
+/* Novo destaque para Eficiência Mensal */
+.pcard .p-val-efic {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--good);
+  margin-top: 2px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pcard .p-val-efic span {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: .4px;
+}
+
+.pcard .p-sub{font-size:11.5px;margin-top:5px;color:var(--muted);display:flex;justify-content:space-between}
 .pcard .p-sub b{color:var(--ink);font-weight:700}
-.pcard .p-sub.highlight{border-top:1px dashed var(--line);padding-top:6px;margin-top:8px}
+.pcard .p-sub.highlight{border-top:1px dashed var(--line);padding-top:10px;margin-top:6px}
 
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:16px}
 .card h2{font-size:14.5px;margin:0 0 2px;font-weight:800}
@@ -118,7 +138,7 @@ async function fetchSheetCSV(){
       const text = await response.text();
       const pareceHTML = /<html|accounts\.google\.com|sign in/i.test(text.slice(0,500));
       if(!response.ok || pareceHTML){
-        lastErr = 'A planilha retornou uma página de login/HTML em vez de CSV. Confirme o compartilhamento como "Qualquer pessoa com el link — Leitor".';
+        lastErr = 'A planilha retornou uma página de login/HTML em vez de CSV. Confirme o compartilhamento como "Qualquer pessoa com o link — Leitor".';
         continue;
       }
       return text;
@@ -250,25 +270,25 @@ function renderHero(groups){
   
   // Card Geral
   cards.push(`<div class="pcard geral">
-    <div class="p-lab">Potencial Total Geral (2 Meses)</div>
-    <div class="p-val">${BRL.format(geral.total)}</div>
+    <div class="p-lab">Total Geral (Potencial Mensal)</div>
+    <div class="p-val">${BRL.format(geral.hon20Mes)}</div>
+    <div class="p-val-efic"><span>Eficiência 30% / mês</span> ${BRL.format(geral.efic30Mes)}</div>
+    
+    <div class="p-sub highlight"><span>Total Bruto (2 Meses)</span><b>${BRL.format(geral.total)}</b></div>
+    <div class="p-sub"><span>Hon. 20% (Acumulado)</span><b>${BRL.format(geral.hon20)}</b></div>
     <div class="p-sub"><span>Base atual</span><b>${INT.format(geral.base)}</b></div>
-    <div class="p-sub"><span>Honorários 20% (Total)</span><b>${BRL.format(geral.hon20)}</b></div>
-    <div class="p-sub"><span>Eficiência 30% (Total)</span><b>${BRL.format(geral.efic30)}</b></div>
-    <div class="p-sub highlight"><span>Hon. 20% / mês</span><b>${BRL.format(geral.hon20Mes)}</b></div>
-    <div class="p-sub"><span>Efic. 30% / mês</span><b>${BRL.format(geral.efic30Mes)}</b></div>
   </div>`);
 
   // Cards das Categorias
   groups.forEach(g => {
     cards.push(`<div class="pcard">
-      <div class="p-lab">${g.tipo} (2 Meses)</div>
-      <div class="p-val">${BRL.format(g.subtotal.total)}</div>
+      <div class="p-lab">${g.tipo} (Potencial Mensal)</div>
+      <div class="p-val">${BRL.format(g.subtotal.hon20Mes)}</div>
+      <div class="p-val-efic"><span>Eficiência 30% / mês</span> ${BRL.format(g.subtotal.efic30Mes)}</div>
+      
+      <div class="p-sub highlight"><span>Total Bruto (2 Meses)</span><b>${BRL.format(g.subtotal.total)}</b></div>
+      <div class="p-sub"><span>Hon. 20% (Acumulado)</span><b>${BRL.format(g.subtotal.hon20)}</b></div>
       <div class="p-sub"><span>Base atual</span><b>${INT.format(g.subtotal.base)}</b></div>
-      <div class="p-sub"><span>Honorários 20% (Total)</span><b>${BRL.format(g.subtotal.hon20)}</b></div>
-      <div class="p-sub"><span>Eficiência 30% (Total)</span><b>${BRL.format(g.subtotal.efic30)}</b></div>
-      <div class="p-sub highlight"><span>Hon. 20% / mês</span><b>${BRL.format(g.subtotal.hon20Mes)}</b></div>
-      <div class="p-sub"><span>Efic. 30% / mês</span><b>${BRL.format(g.subtotal.efic30Mes)}</b></div>
     </div>`);
   });
 
@@ -285,10 +305,10 @@ function renderTables(groups){
       <th class="num">Base</th>
       <th class="num">Parcelas/Taxas</th>
       <th class="num">Encargos</th>
-      <th class="num">Total</th>
-      <th class="num">Honorários 20%</th>
+      <th class="num">Total (2m)</th>
+      <th class="num">Hon. 20% (2m)</th>
       <th class="num mth">Hon. 20%/mês</th>
-      <th class="num">Eficiência 30%</th>
+      <th class="num">Efic. 30% (2m)</th>
       <th class="num mth">Efic. 30%/mês</th>
     </tr></thead><tbody>`;
     g.items.forEach(it => {
@@ -299,9 +319,9 @@ function renderTables(groups){
         <td class="num">${BRL.format(it.encargos)}</td>
         <td class="num">${BRL.format(it.total)}</td>
         <td class="num">${BRL.format(it.hon20)}</td>
-        <td class="num mth">${BRL.format(it.hon20Mes)}</td>
+        <td class="num mth" style="font-weight:600; color:var(--brand2);">${BRL.format(it.hon20Mes)}</td>
         <td class="num">${BRL.format(it.efic30)}</td>
-        <td class="num mth">${BRL.format(it.efic30Mes)}</td>
+        <td class="num mth" style="font-weight:600; color:var(--good);">${BRL.format(it.efic30Mes)}</td>
       </tr>`;
     });
     html += `<tr class="subtotal">
@@ -311,9 +331,9 @@ function renderTables(groups){
       <td class="num">${BRL.format(g.subtotal.encargos)}</td>
       <td class="num">${BRL.format(g.subtotal.total)}</td>
       <td class="num">${BRL.format(g.subtotal.hon20)}</td>
-      <td class="num mth">${BRL.format(g.subtotal.hon20Mes)}</td>
+      <td class="num mth" style="color:var(--brand2);">${BRL.format(g.subtotal.hon20Mes)}</td>
       <td class="num">${BRL.format(g.subtotal.efic30)}</td>
-      <td class="num mth">${BRL.format(g.subtotal.efic30Mes)}</td>
+      <td class="num mth" style="color:var(--good);">${BRL.format(g.subtotal.efic30Mes)}</td>
     </tr>`;
     html += '</tbody></table></div>';
   });
