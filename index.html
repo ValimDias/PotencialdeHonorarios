@@ -232,18 +232,23 @@ function renderHero(groups){
   }), {base:0,total:0,hon20:0,efic30:0});
 
   const cards = [];
+  
+  // Card Geral
   cards.push(`<div class="pcard geral">
     <div class="p-lab">Potencial Total Geral</div>
     <div class="p-val">${BRL.format(geral.total)}</div>
     <div class="p-sub"><span>Honorários 20%</span><b>${BRL.format(geral.hon20)}</b></div>
     <div class="p-sub"><span>Eficiência 30%</span><b>${BRL.format(geral.efic30)}</b></div>
+    <div class="p-sub"><span>Base atual</span><b>${INT.format(geral.base)}</b></div>
   </div>`);
 
+  // Cards de cada categoria
   groups.forEach(g => {
     cards.push(`<div class="pcard">
       <div class="p-lab">${g.tipo}</div>
       <div class="p-val">${BRL.format(g.subtotal.total)}</div>
       <div class="p-sub"><span>Honorários 20%</span><b>${BRL.format(g.subtotal.hon20)}</b></div>
+      <div class="p-sub"><span>Eficiência 30%</span><b>${BRL.format(g.subtotal.efic30)}</b></div>
       <div class="p-sub"><span>Base atual</span><b>${INT.format(g.subtotal.base)}</b></div>
     </div>`);
   });
