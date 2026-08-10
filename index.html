@@ -112,14 +112,14 @@ footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
   <div class="section-title">Resumo por Categoria</div>
   <div class="hero" id="hero"></div>
 
-  <div class="section-title">Resumo por Negociador</div>
-  <div class="hero" id="hero-neg"></div>
-
-  <div class="card" style="margin-top: 24px;">
+  <div class="card" style="margin-top: 16px;">
     <h2>Detalhamento por tipo e empreendimento</h2>
     <div class="hint">Alterne entre a visão total e mensal usando o botão no topo da página.</div>
     <div id="tables"></div>
   </div>
+
+  <div class="section-title" style="margin-top: 32px;">Resumo por Negociador</div>
+  <div class="hero" id="hero-neg"></div>
 
   <footer>Fonte: Google Sheets — atualiza automaticamente ao carregar a página. Use "Atualizar" para forçar uma nova leitura.</footer>
 </div>
@@ -136,7 +136,7 @@ const CSV_URLS = [
 ];
 
 const BRL = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
-const INT = new Intl.NumberFormat('pt-BR');
+const INT = new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0});
 const $ = s => document.querySelector(s);
 
 let globalGroups = [];
@@ -206,25 +206,6 @@ function findHeader(matrix){
   return 0;
 }
 
-/* ===================== REGRA DOS NEGOCIADORES ===================== */
-function identificarNegociador(tipo, nome) {
-  const t = (tipo || '').toLowerCase();
-  const n = (nome || '').toLowerCase();
-
-  if (t.includes('condomínio') || t.includes('condominio')) return 'Gabriela';
-  
-  if (n.includes('mabu') || n.includes('brava mundo encargos') || 
-      n.includes('arcobaleno') || n.includes('vilaruna') || n.includes('makai')) {
-    return 'Matheus';
-  }
-  
-  if (n.includes('brava mundo parcelas') || n.includes('golden')) {
-    return 'Gabriella';
-  }
-
-  return 'Outros';
-}
-
 /* ===================== MONTA GRUPOS ===================== */
 function buildGroups(matrix){
   const headerRow = findHeader(matrix);
@@ -247,7 +228,6 @@ function buildGroups(matrix){
 
     const linha = {
       nome,
-      negociador: identificarNegociador(current ? current.tipo : tipoCell, nome),
       base: parseNumBR(r[2]),
       parcelas: parseNumBR(r[3]),
       encargos: parseNumBR(r[4]),
@@ -290,7 +270,6 @@ function renderHero(){
   const isMensal = viewMode === 'mensal';
   const labelTop = isMensal ? 'Potencial Mensal' : 'Potencial Total';
 
-  // Função auxiliar para criar cada Card
   const createCardHtml = (title, data, customClass = '') => {
     const valPrincipal = isMensal ? data.hon20Mes : data.hon20;
     const valEfic = isMensal ? data.efic30Mes : data.efic30;
@@ -334,27 +313,59 @@ function renderHero(){
   $('#hero').innerHTML = cardsCat.join('');
 
   // --- 2. RENDER CARDS DE NEGOCIADORES ---
-  const negData = {};
+  const negData = {
+    'Gabriela': {base:0, total:0, hon20:0, hon20Mes:0, efic30:0, efic30Mes:0},
+    'Matheus': {base:0, total:0, hon20:0, hon20Mes:0, efic30:0, efic30Mes:0},
+    'Gabriella': {base:0, total:0, hon20:0, hon20Mes:0, efic30:0, efic30Mes:0}
+  };
+
+  const addNeg = (tgt, it, prop = 1) => {
+    tgt.base += (it.base * prop);
+    tgt.total += (it.total * prop);
+    tgt.hon20 += (it.hon20 * prop);
+    tgt.hon20Mes += (it.hon20Mes * prop);
+    tgt.efic30 += (it.efic30 * prop);
+    tgt.efic30Mes += (it.efic30Mes * prop);
+  };
+
   globalGroups.forEach(g => {
+    const isCondominio = g.tipo.toLowerCase().includes('condomínio') || g.tipo.toLowerCase().includes('condominio');
+
     g.items.forEach(it => {
-      const n = it.negociador;
-      if(n === 'Outros') return; // Ignora se não caiu em nenhum dos 3
-      if(!negData[n]) {
-        negData[n] = {base:0, total:0, hon20:0, hon20Mes:0, efic30:0, efic30Mes:0};
+      const n = (it.nome || '').toLowerCase();
+
+      if (isCondominio) {
+        addNeg(negData['Gabriela'], it);
+      } else if (n.includes('mabu') || n.includes('arcobaleno') || n.includes('vilaruna') || n.includes('makai')) {
+        addNeg(negData['Matheus'], it);
+      } else if (n.includes('golden')) {
+        addNeg(negData['Gabriella'], it);
+      } else if (n.includes('brava mundo')) {
+        // Lógica de rateio Brava Mundo (Parcelas -> Gabriella | Encargos -> Matheus)
+        const valParcelas = it.parcelas || 0;
+        const valEncargos = it.encargos || 0;
+        const valSoma = valParcelas + valEncargos;
+
+        if (valSoma > 0) {
+          const propGab = valParcelas / valSoma;
+          const propMat = valEncargos / valSoma;
+          addNeg(negData['Gabriella'], it, propGab);
+          addNeg(negData['Matheus'], it, propMat);
+        } else {
+          // Fallback seguro se ambos forem zero
+          addNeg(negData['Gabriella'], it, 0.5);
+          addNeg(negData['Matheus'], it, 0.5);
+        }
       }
-      negData[n].base += it.base;
-      negData[n].total += it.total;
-      negData[n].hon20 += it.hon20;
-      negData[n].hon20Mes += it.hon20Mes;
-      negData[n].efic30 += it.efic30;
-      negData[n].efic30Mes += it.efic30Mes;
     });
   });
 
   const cardsNeg = [];
-  // Ordenar para ficar bonitinho: Gabriela, Gabriella, Matheus
   Object.keys(negData).sort().forEach(nome => {
-    cardsNeg.push(createCardHtml(nome, negData[nome], 'negociador'));
+    // Só renderiza se tiver algum valor (evita cards zerados caso mude a base de dados)
+    if(negData[nome].total > 0 || negData[nome].base > 0) {
+       cardsNeg.push(createCardHtml(nome, negData[nome], 'negociador'));
+    }
   });
   $('#hero-neg').innerHTML = cardsNeg.join('');
 }
