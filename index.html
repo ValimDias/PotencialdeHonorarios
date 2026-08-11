@@ -178,6 +178,7 @@ const INT = new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0});
 const $ = s => document.querySelector(s);
 
 let globalGroups = [];
+let globalNegociadores = {}; // Guarda os dados dos negociadores diretos da planilha
 let viewMode = 'total'; 
 let chartInstances = {}; 
 
@@ -237,8 +238,10 @@ function parseNumBR(v){
 /* ===================== MONTA GRUPOS ===================== */
 function buildGroups(matrix){
   const groups = []; 
+  globalNegociadores = {};
   let current = null;
   let nomeIdx = -1;
+  let isNegociadorMode = false;
 
   for(let i=0; i<matrix.length; i++){
     const r = matrix[i]; if(!r) continue;
@@ -254,7 +257,41 @@ function buildGroups(matrix){
        }
        current = { tipo: tipo, items: [], subtotal: null };
        groups.push(current);
+       isNegociadorMode = false; // Desliga leitura de negociadores e volta para empreendimentos
        continue;
+    }
+
+    // Detecta o bloco "Negociador" que você criou na planilha
+    let possibleNegIdx = lowerRow.indexOf('negociador');
+    if (possibleNegIdx !== -1) {
+       isNegociadorMode = true;
+       nomeIdx = possibleNegIdx + 1; // A coluna do nome fica à direita de "Negociador"
+    } 
+
+    if (isNegociadorMode) {
+      if (nomeIdx !== -1) {
+          const nome = (r[nomeIdx] || '').trim();
+          if (nome && nome.toLowerCase() !== 'total' && nome.toLowerCase() !== 'negociador') {
+              const base = parseNumBR(r[nomeIdx + 1]);
+              const parcelas = parseNumBR(r[nomeIdx + 2]);
+              const encargos = parseNumBR(r[nomeIdx + 3]);
+              const total = parseNumBR(r[nomeIdx + 4]);
+              const hon20 = parseNumBR(r[nomeIdx + 5]);
+              const efic25 = parseNumBR(r[nomeIdx + 6]);
+              const efic20 = parseNumBR(r[nomeIdx + 7]);
+
+              // Formata nome para ficar bonito (ex: gabriella -> Gabriella)
+              const nomeFormatado = nome.charAt(0).toUpperCase() + nome.slice(1).toLowerCase();
+
+              globalNegociadores[nomeFormatado] = {
+                base, parcelas, encargos, total, hon20, efic25, efic20,
+                hon20Mes: hon20 / MESES, hon20Dia: (hon20 / MESES) / DIAS_UTEIS,
+                efic25Mes: efic25 / MESES, efic25Dia: (efic25 / MESES) / DIAS_UTEIS,
+                efic20Mes: efic20 / MESES, efic20Dia: (efic20 / MESES) / DIAS_UTEIS
+              };
+          }
+      }
+      continue;
     }
 
     if (!current || nomeIdx === -1) continue;
@@ -429,37 +466,13 @@ function renderHero(){
   
   $('#hero').innerHTML = cardsCat.join('');
 
-  const negData = {
-    'Gabriela': {base:0, total:0, hon20:0, hon20Mes:0, hon20Dia:0, efic25:0, efic25Mes:0, efic25Dia:0, efic20:0, efic20Mes:0, efic20Dia:0},
-    'Matheus': {base:0, total:0, hon20:0, hon20Mes:0, hon20Dia:0, efic25:0, efic25Mes:0, efic25Dia:0, efic20:0, efic20Mes:0, efic20Dia:0},
-    'Gabriella': {base:0, total:0, hon20:0, hon20Mes:0, hon20Dia:0, efic25:0, efic25Mes:0, efic25Dia:0, efic20:0, efic20Mes:0, efic20Dia:0}
-  };
-
-  const addNeg = (tgt, it, prop = 1) => {
-    tgt.base += (it.base * prop); tgt.total += (it.total * prop);
-    tgt.hon20 += (it.hon20 * prop); tgt.hon20Mes += (it.hon20Mes * prop); tgt.hon20Dia += (it.hon20Dia * prop);
-    tgt.efic25 += (it.efic25 * prop); tgt.efic25Mes += (it.efic25Mes * prop); tgt.efic25Dia += (it.efic25Dia * prop);
-    tgt.efic20 += (it.efic20 * prop); tgt.efic20Mes += (it.efic20Mes * prop); tgt.efic20Dia += (it.efic20Dia * prop);
-  };
-
-  globalGroups.forEach(g => {
-    const isCondominio = g.tipo.toLowerCase().includes('condomínio') || g.tipo.toLowerCase().includes('condominio');
-    g.items.forEach(it => {
-      const n = (it.nome || '').toLowerCase();
-      if (isCondominio) { addNeg(negData['Gabriela'], it); } 
-      else if (n.includes('mabu') || n.includes('arcobaleno') || n.includes('vilaruna') || n.includes('makai')) { addNeg(negData['Matheus'], it); } 
-      else if (n.includes('golden')) { addNeg(negData['Gabriella'], it); } 
-      else if (n.includes('brava mundo')) {
-        const valSoma = (it.parcelas || 0) + (it.encargos || 0);
-        if (valSoma > 0) { addNeg(negData['Gabriella'], it, (it.parcelas || 0) / valSoma); addNeg(negData['Matheus'], it, (it.encargos || 0) / valSoma); } 
-        else { addNeg(negData['Gabriella'], it, 0.5); addNeg(negData['Matheus'], it, 0.5); }
-      }
-    });
-  });
-
+  // Agora renderiza OS NEGOCIADORES diretamente da variável mapeada na planilha!
   const cardsNeg = [];
-  Object.keys(negData).sort().forEach(nome => {
-    if(negData[nome].total > 0 || negData[nome].base > 0) { cardsNeg.push(createCardHtml(nome, negData[nome], 'negociador')); }
+  Object.keys(globalNegociadores).sort().forEach(nome => {
+    const data = globalNegociadores[nome];
+    if(data.total > 0 || data.base > 0) { 
+        cardsNeg.push(createCardHtml(nome, data, 'negociador')); 
+    }
   });
   $('#hero-neg').innerHTML = cardsNeg.join('');
 }
