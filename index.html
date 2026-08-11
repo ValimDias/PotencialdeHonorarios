@@ -43,11 +43,14 @@ button:hover{border-color:var(--brand2);color:var(--brand2)}
 .section-title {font-size:15px; font-weight:800; color:var(--brand); margin: 24px 0 12px; display: flex; align-items: center; gap: 8px;}
 .section-title::before {content:''; display:inline-block; width:4px; height:16px; background:var(--gold); border-radius:4px;}
 
-.hero{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px}
-@media (max-width:1024px){.hero{grid-template-columns:repeat(2,1fr)}}
+/* Grid do Topo: Cartões na esquerda, Gráfico na direita */
+.dashboard-top { display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px; margin-bottom: 24px; align-items: stretch; }
+@media (max-width: 900px) { .dashboard-top { grid-template-columns: 1fr; } }
+
+.hero{display:grid;grid-template-columns:repeat(2,1fr);gap:11px; align-content: start;}
 @media (max-width:600px){.hero{grid-template-columns:1fr}}
 
-.pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px;box-shadow:var(--shadow);border-top:3px solid var(--brand2)}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px;box-shadow:var(--shadow);border-top:3px solid var(--brand2); display: flex; flex-direction: column; justify-content: center;}
 .pcard.geral{border-top-color:var(--gold);background:linear-gradient(135deg,var(--panel),var(--panel2))}
 .pcard.negociador{border-top-color:var(--good);}
 .pcard .p-lab{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted); margin-bottom: 2px;}
@@ -66,12 +69,12 @@ button:hover{border-color:var(--brand2);color:var(--brand2)}
 .card h2{font-size:14.5px;margin:0 0 2px;font-weight:800}
 .card .hint{font-size:12px;color:var(--muted);margin-bottom:12px}
 
-/* Grid para Gráficos */
-.charts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-.chart-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); height: 280px; position: relative; display: flex; align-items: center; justify-content: center; }
+/* Grid para Tabelas e Gráficos lado a lado */
+.group-layout { display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px; align-items: start; margin-bottom: 24px; }
+@media (max-width: 900px) { .group-layout { grid-template-columns: 1fr; } }
+
+.chart-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); height: 320px; position: sticky; top: 20px; display: flex; align-items: center; justify-content: center; }
 .chart-card canvas { width: 100% !important; height: 100% !important; }
-@media (max-width:1024px){.charts-grid{grid-template-columns: repeat(2, 1fr); gap: 16px;}}
-@media (max-width:600px){.charts-grid{grid-template-columns: 1fr;}}
 
 table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -80,7 +83,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 th.mth,td.mth{background:rgba(47,110,168,.05)}
 tr.subtotal td{font-weight:800;background:var(--panel2);border-top:1.5px solid var(--line)}
 tr.subtotal td.tp{color:var(--brand)}
-.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
+.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:10px; flex-grow: 1;}
 .empty{color:var(--muted);font-size:12.5px;padding:20px 4px;text-align:center}
 .err{color:var(--bad);font-size:12.5px;padding:10px 4px}
 
@@ -108,15 +111,13 @@ footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
   </header>
 
   <div class="section-title">Resumo por Categoria</div>
-  <div class="hero" id="hero"></div>
-
-  <!-- Nova seção de gráficos -->
-  <div class="section-title" style="margin-top: 24px;">Distribuição de Honorários</div>
-  <div class="charts-grid" id="charts">
-    <div class="chart-card"><canvas id="chartMain"></canvas></div>
-    <div class="chart-card"><canvas id="chartCond"></canvas></div>
-    <div class="chart-card"><canvas id="chartInc"></canvas></div>
-    <div class="chart-card"><canvas id="chartPre"></canvas></div>
+  
+  <!-- Grid principal: Cartões + Gráfico -->
+  <div class="dashboard-top">
+    <div class="hero" id="hero"></div>
+    <div class="chart-card" style="height: auto; min-height: 350px;">
+      <canvas id="chartMain"></canvas>
+    </div>
   </div>
 
   <div class="card" style="margin-top: 16px;">
@@ -268,26 +269,18 @@ function buildGroups(matrix){
 
 /* ===================== RENDER GRÁFICOS ===================== */
 function renderCharts() {
-  // Destrói os gráficos antigos antes de recriar
   Object.values(chartInstances).forEach(chart => chart.destroy());
   chartInstances = {};
 
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   Chart.defaults.color = isDark ? '#94a2b6' : '#66738a';
   
-  // Define o valor com base na visão atual
   const getVal = (item) => {
     if(viewMode === 'mensal') return item.hon20Mes;
     if(viewMode === 'diario') return item.hon20Dia;
     return item.hon20;
   };
 
-  const getGrp = keyword => globalGroups.find(x => x.tipo.toLowerCase().includes(keyword));
-  const grpCond = getGrp('condom');
-  const grpInc = getGrp('incorporadora');
-  const grpPre = getGrp('pré');
-
-  // Cores personalizadas
   const colors = ['#16365c', '#c8a04a', '#2f6ea8', '#4a9bd4', '#178f60', '#94a2b6', '#cf4055'];
 
   const createDoughnut = (id, title, labels, data) => {
@@ -315,7 +308,7 @@ function renderCharts() {
               label: function(context) {
                 let val = context.raw || 0;
                 let sum = context.chart._metasets[context.datasetIndex].total;
-                let pct = ((val * 100) / sum).toFixed(1) + "%";
+                let pct = sum > 0 ? ((val * 100) / sum).toFixed(1) + "%" : "0%";
                 return ` ${pct} - ${BRL.format(val)}`;
               }
             }
@@ -327,15 +320,28 @@ function renderCharts() {
 
   // 1. Gráfico Principal (Geral)
   const mainLabels = []; const mainData = [];
-  if(grpInc && grpInc.subtotal.hon20 > 0) { mainLabels.push('Incorporadora'); mainData.push(getVal(grpInc.subtotal)); }
-  if(grpCond && grpCond.subtotal.hon20 > 0) { mainLabels.push('Condomínio'); mainData.push(getVal(grpCond.subtotal)); }
-  if(grpPre && grpPre.subtotal.hon20 > 0) { mainLabels.push('Pré Judicial'); mainData.push(getVal(grpPre.subtotal)); }
+  globalGroups.forEach(g => {
+    const tp = g.tipo.toLowerCase();
+    const isJudicial = tp.includes('judicial') && !tp.includes('pré');
+    if(!isJudicial && g.subtotal.hon20 > 0) {
+      mainLabels.push(g.tipo);
+      mainData.push(getVal(g.subtotal));
+    }
+  });
   createDoughnut('chartMain', 'Total por Categoria', mainLabels, mainData);
 
-  // 2. Gráficos de Categorias
-  if(grpCond) createDoughnut('chartCond', 'Condomínio', grpCond.items.map(i=>i.nome), grpCond.items.map(i=>getVal(i)));
-  if(grpInc) createDoughnut('chartInc', 'Incorporadora', grpInc.items.map(i=>i.nome), grpInc.items.map(i=>getVal(i)));
-  if(grpPre) createDoughnut('chartPre', 'Pré Judicial', grpPre.items.map(i=>i.nome), grpPre.items.map(i=>getVal(i)));
+  // 2. Gráficos de Categorias (dinâmico nas tabelas)
+  globalGroups.forEach((g, idx) => {
+    const canvasId = `chartGrp_${idx}`;
+    if (document.getElementById(canvasId)) {
+      const labels = g.items.map(i => i.nome);
+      const data = g.items.map(i => getVal(i));
+      // Só renderiza o gráfico se tiver algum valor > 0
+      if(data.some(v => v > 0)){
+        createDoughnut(canvasId, g.tipo, labels, data);
+      }
+    }
+  });
 }
 
 /* ===================== RENDER DASHBOARD ===================== */
@@ -430,10 +436,15 @@ function renderTables(){
   const isFrac = viewMode === 'mensal' || viewMode === 'diario';
   let html = '';
   
-  globalGroups.forEach(g => {
+  globalGroups.forEach((g, idx) => {
     const isCondominio = g.tipo.toLowerCase().includes('condomínio') || g.tipo.toLowerCase().includes('condominio');
 
     html += `<div class="grpname"><span class="chip">${g.tipo}</span></div>`;
+    
+    // Layout que coloca a Tabela à esquerda e o Gráfico à direita
+    html += `<div class="group-layout">`;
+    
+    // TABELA (Lado Esquerdo)
     html += `<div class="tblwrap"><table><thead><tr>
       <th>Empreendimento</th><th class="num">Base</th><th class="num">Parcelas/Taxas</th>`;
       
@@ -463,6 +474,12 @@ function renderTables(){
     html += `<tr class="subtotal"><td class="tp">Total</td><td class="num">${INT.format(g.subtotal.base)}</td><td class="num">${BRL.format(g.subtotal.parcelas)}</td>`;
     if(!isCondominio) html += `<td class="num">${BRL.format(g.subtotal.encargos)}</td>`;
     html += `<td class="num">${BRL.format(g.subtotal.total)}</td><td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subHon)}</td><td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subEfic25)}</td><td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subEfic20)}</td></tr></tbody></table></div>`;
+    
+    // GRÁFICO (Lado Direito)
+    html += `<div class="chart-card"><canvas id="chartGrp_${idx}"></canvas></div>`;
+    
+    // Fecha o layout
+    html += `</div>`;
   });
   
   $('#tables').innerHTML = html;
