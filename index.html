@@ -21,7 +21,7 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1300px;margin:0 auto;padding:16px 20px 60px}
+.wrap{max-width:1400px;margin:0 auto;padding:16px 20px 60px}
 
 header.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding:4px 0 14px}
 .logo-chip{background:linear-gradient(135deg,var(--brand),var(--brand2));border-radius:12px;padding:9px 16px;box-shadow:var(--shadow);display:flex;align-items:center;color:#fff;font-weight:800;font-size:15px;letter-spacing:.4px}
@@ -43,38 +43,67 @@ button:hover{border-color:var(--brand2);color:var(--brand2)}
 .section-title {font-size:15px; font-weight:800; color:var(--brand); margin: 24px 0 12px; display: flex; align-items: center; gap: 8px;}
 .section-title::before {content:''; display:inline-block; width:4px; height:16px; background:var(--gold); border-radius:4px;}
 
-/* Grid do Topo: Cartões na esquerda, Gráfico na direita */
-.dashboard-top { display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px; margin-bottom: 24px; align-items: stretch; }
-@media (max-width: 900px) { .dashboard-top { grid-template-columns: 1fr; } }
+/* Grid do Topo: 4 Cartões alinhados na mesma linha com o gráfico */
+.dashboard-top { 
+  display: grid; 
+  grid-template-columns: 4fr 1.3fr; /* 4 partes para os cards, 1.3 partes para o gráfico */
+  gap: 12px; 
+  margin-bottom: 24px; 
+  align-items: stretch;
+}
+@media (max-width: 1024px) { .dashboard-top { grid-template-columns: 1fr; } }
 
-.hero{display:grid;grid-template-columns:repeat(2,1fr);gap:11px; align-content: start;}
-@media (max-width:600px){.hero{grid-template-columns:1fr}}
+.hero {
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); /* 4 colunas de cartões */
+  gap: 12px;
+}
+@media (max-width: 800px) { .hero { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .hero { grid-template-columns: 1fr; } }
 
-.pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px;box-shadow:var(--shadow);border-top:3px solid var(--brand2); display: flex; flex-direction: column; justify-content: center;}
+.chart-top-container {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--shadow);
+  position: relative;
+  min-height: 280px; 
+}
+.chart-wrapper {
+  position: absolute; top: 16px; left: 16px; right: 16px; bottom: 16px; /* Impede o bug de redimensionamento infinito */
+}
+
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px 12px;box-shadow:var(--shadow);border-top:3px solid var(--brand2); display: flex; flex-direction: column; justify-content: center;}
 .pcard.geral{border-top-color:var(--gold);background:linear-gradient(135deg,var(--panel),var(--panel2))}
 .pcard.negociador{border-top-color:var(--good);}
-.pcard .p-lab{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted); margin-bottom: 2px;}
-.pcard .p-val{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:4px;color:var(--brand)}
+.pcard .p-lab{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted); margin-bottom: 2px;}
+.pcard .p-val{font-size:20px;font-weight:800;letter-spacing:-.5px;margin-top:4px;color:var(--brand)}
 :root[data-theme="dark"] .pcard .p-val{color:var(--ink)}
 
-.pcard .p-val-efic {font-size: 15px;font-weight: 800;color: var(--good);margin-top: 4px;display: flex;justify-content: space-between;align-items: center;}
+.pcard .p-val-efic {font-size: 13.5px;font-weight: 800;color: var(--good);margin-top: 4px;display: flex;justify-content: space-between;align-items: center;}
 .pcard .p-val-efic.last {margin-bottom: 12px;}
-.pcard .p-val-efic span {font-size: 10px;font-weight: 800;text-transform: uppercase;color: var(--muted);letter-spacing: .4px;}
+.pcard .p-val-efic span {font-size: 9px;font-weight: 800;text-transform: uppercase;color: var(--muted);letter-spacing: .4px;}
 
-.pcard .p-sub{font-size:11px;margin-top:6px;color:var(--muted);display:flex;justify-content:space-between;align-items:center; gap: 8px;}
+.pcard .p-sub{font-size:10.5px;margin-top:6px;color:var(--muted);display:flex;justify-content:space-between;align-items:center; gap: 8px;}
 .pcard .p-sub b{color:var(--ink);font-weight:700; white-space:nowrap; text-align:right;}
-.pcard .p-sub.highlight{border-top:1px dashed var(--line);padding-top:12px;margin-top:8px}
+.pcard .p-sub.highlight{border-top:1px dashed var(--line);padding-top:10px;margin-top:6px}
 
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:16px}
 .card h2{font-size:14.5px;margin:0 0 2px;font-weight:800}
 .card .hint{font-size:12px;color:var(--muted);margin-bottom:12px}
 
 /* Grid para Tabelas e Gráficos lado a lado */
-.group-layout { display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px; align-items: start; margin-bottom: 24px; }
+.group-layout { 
+  display: grid; 
+  grid-template-columns: 2.5fr 1fr; 
+  gap: 16px; 
+  align-items: stretch; 
+  margin-bottom: 24px; 
+}
 @media (max-width: 900px) { .group-layout { grid-template-columns: 1fr; } }
 
-.chart-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); height: 320px; position: sticky; top: 20px; display: flex; align-items: center; justify-content: center; }
-.chart-card canvas { width: 100% !important; height: 100% !important; }
+.chart-card { 
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); 
+  position: relative; /* Sticky removido para evitar o comportamento de descida indesejada */
+  min-height: 320px;
+}
 
 table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -83,7 +112,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 th.mth,td.mth{background:rgba(47,110,168,.05)}
 tr.subtotal td{font-weight:800;background:var(--panel2);border-top:1.5px solid var(--line)}
 tr.subtotal td.tp{color:var(--brand)}
-.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:10px; flex-grow: 1;}
+.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:10px; flex-grow: 1; min-height: 100%;}
 .empty{color:var(--muted);font-size:12.5px;padding:20px 4px;text-align:center}
 .err{color:var(--bad);font-size:12.5px;padding:10px 4px}
 
@@ -112,11 +141,13 @@ footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
 
   <div class="section-title">Resumo por Categoria</div>
   
-  <!-- Grid principal: Cartões + Gráfico -->
+  <!-- Grid principal: 4 Cartões + 1 Gráfico -->
   <div class="dashboard-top">
     <div class="hero" id="hero"></div>
-    <div class="chart-card" style="height: auto; min-height: 350px;">
-      <canvas id="chartMain"></canvas>
+    <div class="chart-top-container">
+      <div class="chart-wrapper">
+        <canvas id="chartMain"></canvas>
+      </div>
     </div>
   </div>
 
@@ -148,8 +179,8 @@ const INT = new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0});
 const $ = s => document.querySelector(s);
 
 let globalGroups = [];
-let viewMode = 'total'; // 'total', 'mensal' ou 'diario'
-let chartInstances = {}; // Guarda as instâncias dos gráficos
+let viewMode = 'total'; 
+let chartInstances = {}; 
 
 /* ===================== FETCH ===================== */
 async function fetchSheetCSV(){
@@ -250,7 +281,6 @@ function buildGroups(matrix){
     current.items.push(linha);
   }
 
-  // Consolidação de Subtotais
   groups.forEach(g => {
     if(!g.subtotal){
       g.subtotal = g.items.reduce((acc,it) => ({
@@ -336,7 +366,6 @@ function renderCharts() {
     if (document.getElementById(canvasId)) {
       const labels = g.items.map(i => i.nome);
       const data = g.items.map(i => getVal(i));
-      // Só renderiza o gráfico se tiver algum valor > 0
       if(data.some(v => v > 0)){
         createDoughnut(canvasId, g.tipo, labels, data);
       }
@@ -361,11 +390,11 @@ function renderHero(){
       <div class="p-val-efic"><span>Eficiência 25%</span> ${BRL.format(valEfic25)}</div>
       <div class="p-val-efic last"><span>Eficiência 20%</span> ${BRL.format(valEfic20)}</div>
       
-      <div class="p-sub highlight"><span>Valor negociado p/ Projeto</span><b>${BRL.format(data.total)}</b></div>
-      <div class="p-sub"><span>Contratos na base</span><b>${INT.format(data.base)}</b></div>
-      <div class="p-sub"><span>Hon. 20% (Total base)</span><b>${BRL.format(data.hon20)}</b></div>
-      <div class="p-sub"><span>Efic. 25% (Total base)</span><b>${BRL.format(data.efic25)}</b></div>
-      <div class="p-sub"><span>Efic. 20% (Total base)</span><b>${BRL.format(data.efic20)}</b></div>
+      <div class="p-sub highlight"><span>Negociado Projeto</span><b>${BRL.format(data.total)}</b></div>
+      <div class="p-sub"><span>Contratos</span><b>${INT.format(data.base)}</b></div>
+      <div class="p-sub"><span>Hon. 20% Base</span><b>${BRL.format(data.hon20)}</b></div>
+      <div class="p-sub"><span>Efic. 25% Base</span><b>${BRL.format(data.efic25)}</b></div>
+      <div class="p-sub"><span>Efic. 20% Base</span><b>${BRL.format(data.efic20)}</b></div>
     </div>`;
   };
 
@@ -441,10 +470,10 @@ function renderTables(){
 
     html += `<div class="grpname"><span class="chip">${g.tipo}</span></div>`;
     
-    // Layout que coloca a Tabela à esquerda e o Gráfico à direita
+    // Layout Lado a Lado (Tabela e Gráfico)
     html += `<div class="group-layout">`;
     
-    // TABELA (Lado Esquerdo)
+    // TABELA (Esquerda)
     html += `<div class="tblwrap"><table><thead><tr>
       <th>Empreendimento</th><th class="num">Base</th><th class="num">Parcelas/Taxas</th>`;
       
@@ -475,10 +504,9 @@ function renderTables(){
     if(!isCondominio) html += `<td class="num">${BRL.format(g.subtotal.encargos)}</td>`;
     html += `<td class="num">${BRL.format(g.subtotal.total)}</td><td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subHon)}</td><td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subEfic25)}</td><td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subEfic20)}</td></tr></tbody></table></div>`;
     
-    // GRÁFICO (Lado Direito)
-    html += `<div class="chart-card"><canvas id="chartGrp_${idx}"></canvas></div>`;
+    // GRÁFICO (Direita), encapsulado para bloquear resize loop
+    html += `<div class="chart-card"><div class="chart-wrapper"><canvas id="chartGrp_${idx}"></canvas></div></div>`;
     
-    // Fecha o layout
     html += `</div>`;
   });
   
@@ -506,7 +534,7 @@ $('#btnTheme').onclick = () => {
   const dark = document.documentElement.getAttribute('data-theme')==='dark';
   document.documentElement.setAttribute('data-theme', dark?'light':'dark');
   $('#btnTheme').textContent = dark?'🌙':'☀️';
-  renderCharts(); // Atualiza cores dos gráficos
+  renderCharts();
 };
 
 async function carregar(){
