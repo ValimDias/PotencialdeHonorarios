@@ -352,10 +352,10 @@ function renderCharts() {
   globalGroups.forEach(g => {
     const tp = g.tipo.toLowerCase();
     
-    // EXCLUI do Total e do Gráfico Geral qualquer categoria que tenha "Judicial" no nome (inclui Pré Judicial)
-    const isJudicial = tp.includes('judicial'); 
+    // Esconde do gráfico APENAS se for o "Judicial" puro. O "Pré Judicial" será exibido.
+    const isStrictJudicial = tp.includes('judicial') && !tp.includes('pré'); 
     
-    if(!isJudicial && g.subtotal.hon20 > 0) {
+    if(!isStrictJudicial && g.subtotal.hon20 > 0) {
       mainLabels.push(g.tipo);
       mainData.push(getVal(g.subtotal));
     }
@@ -425,7 +425,7 @@ function renderHero(){
   cardsCat.push(createCardHtml('Total Geral', geral, 'geral'));
   cardsCat.push(createCardHtml('Condomínio', getGroupData('condom')));
   cardsCat.push(createCardHtml('Incorporadora', getGroupData('incorporadora')));
-  cardsCat.push(createCardHtml('Pré Judicial', getGroupData('pré'))); // Mantém o cartão visível normalmente
+  cardsCat.push(createCardHtml('Pré Judicial', getGroupData('pré'))); 
   
   $('#hero').innerHTML = cardsCat.join('');
 
