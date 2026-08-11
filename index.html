@@ -126,13 +126,13 @@ footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
 
 <script>
 /* ===================== CONFIG ===================== */
-const SHEET_ID = '1mgYzfjQmpL88q5R5jTlP3kU0i2IwPUcfUPm76e534zw';
 const GID = '0';
 const MESES = 2; // Período da negociação em meses
 
+// Usamos o endpoint de exportação de CSV para links publicados do Google Sheets
 const CSV_URLS = [
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`,
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`
+  `https://docs.google.com/spreadsheets/d/e/2PACX-1vRCV0KDEj_jB28lhLDCOh3lQoCVA4NGEk4i5W4h3IPv4utst4oV_U1oJxyHbmur1BPZPz8qDs9xkuSP/pub?gid=${GID}&single=true&output=csv`,
+  `https://docs.google.com/spreadsheets/d/e/2PACX-1vRCV0KDEj_jB28lhLDCOh3lQoCVA4NGEk4i5W4h3IPv4utst4oV_U1oJxyHbmur1BPZPz8qDs9xkuSP/pub?output=csv`
 ];
 
 const BRL = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
@@ -224,7 +224,7 @@ function buildGroups(matrix){
     }
 
     const hon20 = parseNumBR(r[6]);
-    const efic30 = parseNumBR(r[7]);
+    const efic25 = parseNumBR(r[7]); // Alterado para buscar a coluna de efic 25%
 
     const linha = {
       nome,
@@ -234,8 +234,8 @@ function buildGroups(matrix){
       total: parseNumBR(r[5]),
       hon20: hon20,
       hon20Mes: hon20 / MESES,
-      efic30: efic30,
-      efic30Mes: efic30 / MESES
+      efic25: efic25,
+      efic25Mes: efic25 / MESES
     };
 
     if(isTotalRow){
@@ -256,9 +256,9 @@ function buildGroups(matrix){
         total: acc.total+it.total, 
         hon20: acc.hon20+it.hon20, 
         hon20Mes: acc.hon20Mes+it.hon20Mes,
-        efic30: acc.efic30+it.efic30,
-        efic30Mes: acc.efic30Mes+it.efic30Mes
-      }), {base:0,parcelas:0,encargos:0,total:0,hon20:0,hon20Mes:0,efic30:0,efic30Mes:0});
+        efic25: acc.efic25+it.efic25,
+        efic25Mes: acc.efic25Mes+it.efic25Mes
+      }), {base:0,parcelas:0,encargos:0,total:0,hon20:0,hon20Mes:0,efic25:0,efic25Mes:0});
     }
   });
 
@@ -272,12 +272,12 @@ function renderHero(){
 
   const createCardHtml = (title, data, customClass = '') => {
     const valPrincipal = isMensal ? data.hon20Mes : data.hon20;
-    const valEfic = isMensal ? data.efic30Mes : data.efic30;
+    const valEfic = isMensal ? data.efic25Mes : data.efic25;
 
     return `<div class="pcard ${customClass}">
       <div class="p-lab">${title} <span style="text-transform:none;opacity:0.7;">(${labelTop})</span></div>
       <div class="p-val">${BRL.format(valPrincipal)}</div>
-      <div class="p-val-efic"><span>Eficiência 30%</span> ${BRL.format(valEfic)}</div>
+      <div class="p-val-efic"><span>Eficiência 25%</span> ${BRL.format(valEfic)}</div>
       
       <div class="p-sub highlight">
         <span>Valor a ser negociado para o Projeto</span>
@@ -292,8 +292,8 @@ function renderHero(){
         <b>${BRL.format(data.hon20)}</b>
       </div>
       <div class="p-sub">
-        <span>Valor de Honorários em uma eficiência de 30%</span>
-        <b>${BRL.format(data.efic30)}</b>
+        <span>Valor de Honorários em uma eficiência de 25%</span>
+        <b>${BRL.format(data.efic25)}</b>
       </div>
     </div>`;
   };
@@ -302,8 +302,8 @@ function renderHero(){
   const geral = globalGroups.reduce((acc,g) => ({
     base: acc.base+g.subtotal.base, total: acc.total+g.subtotal.total,
     hon20: acc.hon20+g.subtotal.hon20, hon20Mes: acc.hon20Mes+g.subtotal.hon20Mes,
-    efic30: acc.efic30+g.subtotal.efic30, efic30Mes: acc.efic30Mes+g.subtotal.efic30Mes
-  }), {base:0,total:0,hon20:0,hon20Mes:0,efic30:0,efic30Mes:0});
+    efic25: acc.efic25+g.subtotal.efic25, efic25Mes: acc.efic25Mes+g.subtotal.efic25Mes
+  }), {base:0,total:0,hon20:0,hon20Mes:0,efic25:0,efic25Mes:0});
 
   const cardsCat = [];
   cardsCat.push(createCardHtml('Total Geral', geral, 'geral'));
@@ -314,9 +314,9 @@ function renderHero(){
 
   // --- 2. RENDER CARDS DE NEGOCIADORES ---
   const negData = {
-    'Gabriela': {base:0, total:0, hon20:0, hon20Mes:0, efic30:0, efic30Mes:0},
-    'Matheus': {base:0, total:0, hon20:0, hon20Mes:0, efic30:0, efic30Mes:0},
-    'Gabriella': {base:0, total:0, hon20:0, hon20Mes:0, efic30:0, efic30Mes:0}
+    'Gabriela': {base:0, total:0, hon20:0, hon20Mes:0, efic25:0, efic25Mes:0},
+    'Matheus': {base:0, total:0, hon20:0, hon20Mes:0, efic25:0, efic25Mes:0},
+    'Gabriella': {base:0, total:0, hon20:0, hon20Mes:0, efic25:0, efic25Mes:0}
   };
 
   const addNeg = (tgt, it, prop = 1) => {
@@ -324,8 +324,8 @@ function renderHero(){
     tgt.total += (it.total * prop);
     tgt.hon20 += (it.hon20 * prop);
     tgt.hon20Mes += (it.hon20Mes * prop);
-    tgt.efic30 += (it.efic30 * prop);
-    tgt.efic30Mes += (it.efic30Mes * prop);
+    tgt.efic25 += (it.efic25 * prop);
+    tgt.efic25Mes += (it.efic25Mes * prop);
   };
 
   globalGroups.forEach(g => {
@@ -391,17 +391,17 @@ function renderTables(){
     
     if(isMensal) {
       html += `<th class="num mth" style="color:var(--brand2)">Hon. 20%/mês</th>
-               <th class="num mth" style="color:var(--good)">Efic. 30%/mês</th>`;
+               <th class="num mth" style="color:var(--good)">Efic. 25%/mês</th>`;
     } else {
       html += `<th class="num" style="color:var(--brand2)">Honorários 20%</th>
-               <th class="num" style="color:var(--good)">Eficiência 30%</th>`;
+               <th class="num" style="color:var(--good)">Eficiência 25%</th>`;
     }
     
     html += `</tr></thead><tbody>`;
     
     g.items.forEach(it => {
       const vHon = isMensal ? it.hon20Mes : it.hon20;
-      const vEfic = isMensal ? it.efic30Mes : it.efic30;
+      const vEfic = isMensal ? it.efic25Mes : it.efic25;
 
       html += `<tr>
         <td>${it.nome}</td>
@@ -417,7 +417,7 @@ function renderTables(){
     });
 
     const subHon = isMensal ? g.subtotal.hon20Mes : g.subtotal.hon20;
-    const subEfic = isMensal ? g.subtotal.efic30Mes : g.subtotal.efic30;
+    const subEfic = isMensal ? g.subtotal.efic25Mes : g.subtotal.efic25;
 
     html += `<tr class="subtotal">
       <td class="tp">Total</td>
