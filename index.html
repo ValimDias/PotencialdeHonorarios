@@ -41,7 +41,11 @@ button:hover{border-color:var(--brand2);color:var(--brand2)}
 .section-title {font-size:15px; font-weight:800; color:var(--brand); margin: 24px 0 12px; display: flex; align-items: center; gap: 8px;}
 .section-title::before {content:''; display:inline-block; width:4px; height:16px; background:var(--gold); border-radius:4px;}
 
-.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:16px}
+/* Grid ajustado para 4 colunas */
+.hero{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px}
+@media (max-width:1024px){.hero{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.hero{grid-template-columns:1fr}}
+
 .pcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px;box-shadow:var(--shadow);border-top:3px solid var(--brand2)}
 .pcard.geral{border-top-color:var(--gold);background:linear-gradient(135deg,var(--panel),var(--panel2))}
 .pcard.negociador{border-top-color:var(--good);}
@@ -50,14 +54,16 @@ button:hover{border-color:var(--brand2);color:var(--brand2)}
 :root[data-theme="dark"] .pcard .p-val{color:var(--ink)}
 
 .pcard .p-val-efic {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   color: var(--good);
-  margin-top: 2px;
-  margin-bottom: 12px;
+  margin-top: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.pcard .p-val-efic.last {
+  margin-bottom: 12px;
 }
 .pcard .p-val-efic span {
   font-size: 10px;
@@ -90,7 +96,6 @@ tr.subtotal td.tp{color:var(--brand)}
 .grpname .chip{background:var(--brand2);color:#fff;font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.3px}
 
 footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
-@media (max-width:820px){.hero{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -114,12 +119,12 @@ footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
 
   <div class="card" style="margin-top: 16px;">
     <h2>Detalhamento por tipo e empreendimento</h2>
-    <div class="hint">Alterne entre a visão total e mensal usando o botão no topo da página.</div>
+    <div class="hint">Alterne entre as visões usando o botão no topo da página.</div>
     <div id="tables"></div>
   </div>
 
   <div class="section-title" style="margin-top: 32px;">Resumo por Negociador</div>
-  <div class="hero" id="hero-neg"></div>
+  <div class="hero" style="grid-template-columns:repeat(3,1fr);" id="hero-neg"></div>
 
   <footer>Fonte: Google Sheets — atualiza automaticamente ao carregar a página. Use "Atualizar" para forçar uma nova leitura.</footer>
 </div>
@@ -127,9 +132,9 @@ footer{color:var(--muted);font-size:11px;text-align:center;padding-top:6px}
 <script>
 /* ===================== CONFIG ===================== */
 const GID = '0';
-const MESES = 2; // Período da negociação em meses
+const MESES = 2; // Período em meses
+const DIAS_UTEIS = 20; // Dias úteis base no mês
 
-// Usamos o endpoint de exportação de CSV para links publicados do Google Sheets
 const CSV_URLS = [
   `https://docs.google.com/spreadsheets/d/e/2PACX-1vRCV0KDEj_jB28lhLDCOh3lQoCVA4NGEk4i5W4h3IPv4utst4oV_U1oJxyHbmur1BPZPz8qDs9xkuSP/pub?gid=${GID}&single=true&output=csv`,
   `https://docs.google.com/spreadsheets/d/e/2PACX-1vRCV0KDEj_jB28lhLDCOh3lQoCVA4NGEk4i5W4h3IPv4utst4oV_U1oJxyHbmur1BPZPz8qDs9xkuSP/pub?output=csv`
@@ -140,7 +145,7 @@ const INT = new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0});
 const $ = s => document.querySelector(s);
 
 let globalGroups = [];
-let viewMode = 'total'; // 'total' ou 'mensal'
+let viewMode = 'total'; // 'total', 'mensal' ou 'diario'
 
 /* ===================== FETCH ===================== */
 async function fetchSheetCSV(){
@@ -151,13 +156,13 @@ async function fetchSheetCSV(){
       const text = await response.text();
       const pareceHTML = /<html|accounts\.google\.com|sign in/i.test(text.slice(0,500));
       if(!response.ok || pareceHTML){
-        lastErr = 'A planilha retornou uma página de login/HTML em vez de CSV. Confirme o compartilhamento.';
+        lastErr = 'A planilha retornou login em vez de CSV. Confirme o compartilhamento.';
         continue;
       }
       return text;
     }catch(e){
       console.error('Falha em', url, e);
-      lastErr = 'Não foi possível conectar à planilha (bloqueio de rede ou CORS).';
+      lastErr = 'Não foi possível conectar à planilha.';
     }
   }
   throw new Error(lastErr || 'Falha desconhecida ao buscar a planilha.');
@@ -195,70 +200,71 @@ function parseNumBR(v){
   return isNaN(n) ? 0 : n;
 }
 
-function findHeader(matrix){
-  const limite = Math.min(matrix.length, 15);
-  for(let i=0;i<limite;i++){
-    const linha = matrix[i].map(c => (c||'').toLowerCase());
-    const temTipo = linha.some(c => c.includes('tipo'));
-    const temNome = linha.some(c => c.includes('empreendimento') || c.includes('nome'));
-    if(temTipo && temNome) return i;
-  }
-  return 0;
-}
-
 /* ===================== MONTA GRUPOS ===================== */
 function buildGroups(matrix){
-  const headerRow = findHeader(matrix);
   const groups = []; 
   let current = null;
+  let nomeIdx = -1;
 
-  for(let i=headerRow+1;i<matrix.length;i++){
+  for(let i=0; i<matrix.length; i++){
     const r = matrix[i]; if(!r) continue;
-    const tipoCell = (r[0]||'').trim();
-    const nome = (r[1]||'').trim();
-    const isTotalRow = tipoCell && /total/i.test(tipoCell);
-
-    if(tipoCell && !isTotalRow){
-      current = { tipo: tipoCell, items: [], subtotal: null };
-      groups.push(current);
+    
+    const lowerRow = r.map(c => (c||'').toString().toLowerCase().trim());
+    let possibleNomeIdx = lowerRow.indexOf('empreendimento');
+    
+    // Descobre uma nova categoria caso ache 'empreendimento' no cabeçalho
+    if (possibleNomeIdx !== -1) {
+       nomeIdx = possibleNomeIdx;
+       let tipo = 'Outros';
+       // Na nova planilha, a palavra do grupo geralmente fica uma coluna antes do empreendimento
+       if (nomeIdx > 0 && r[nomeIdx - 1] && r[nomeIdx - 1].trim() !== '') {
+           tipo = r[nomeIdx - 1].trim();
+       }
+       current = { tipo: tipo, items: [], subtotal: null };
+       groups.push(current);
+       continue;
     }
 
-    const hon20 = parseNumBR(r[6]);
-    const efic25 = parseNumBR(r[7]); // Alterado para buscar a coluna de efic 25%
+    if (!current || nomeIdx === -1) continue;
+
+    const nome = (r[nomeIdx] || '').trim();
+    if (!nome) continue; 
+    if (nome.toLowerCase().includes('total') || nome.toLowerCase() === 'empreendimento') continue;
+
+    const base = parseNumBR(r[nomeIdx + 1]);
+    const parcelas = parseNumBR(r[nomeIdx + 2]);
+    const encargos = parseNumBR(r[nomeIdx + 3]);
+    const total = parseNumBR(r[nomeIdx + 4]);
+    const hon20 = parseNumBR(r[nomeIdx + 5]);
+    const efic25 = parseNumBR(r[nomeIdx + 6]);
+    const efic20 = parseNumBR(r[nomeIdx + 7]);
 
     const linha = {
-      nome,
-      base: parseNumBR(r[2]),
-      parcelas: parseNumBR(r[3]),
-      encargos: parseNumBR(r[4]),
-      total: parseNumBR(r[5]),
-      hon20: hon20,
-      hon20Mes: hon20 / MESES,
-      efic25: efic25,
-      efic25Mes: efic25 / MESES
+      nome, base, parcelas, encargos, total, hon20, efic25, efic20,
+      hon20Mes: hon20 / MESES, 
+      hon20Dia: (hon20 / MESES) / DIAS_UTEIS,
+      efic25Mes: efic25 / MESES, 
+      efic25Dia: (efic25 / MESES) / DIAS_UTEIS,
+      efic20Mes: efic20 / MESES, 
+      efic20Dia: (efic20 / MESES) / DIAS_UTEIS
     };
-
-    if(isTotalRow){
-      if(current) current.subtotal = linha;
-      continue;
-    }
-    if(!nome) continue;
-    if(!current){ current = { tipo:'Outros', items:[], subtotal:null }; groups.push(current); }
     current.items.push(linha);
   }
 
+  // Consolidação de Subtotais
   groups.forEach(g => {
     if(!g.subtotal){
       g.subtotal = g.items.reduce((acc,it) => ({
-        base: acc.base+it.base, 
-        parcelas: acc.parcelas+it.parcelas, 
-        encargos: acc.encargos+it.encargos,
-        total: acc.total+it.total, 
-        hon20: acc.hon20+it.hon20, 
-        hon20Mes: acc.hon20Mes+it.hon20Mes,
-        efic25: acc.efic25+it.efic25,
-        efic25Mes: acc.efic25Mes+it.efic25Mes
-      }), {base:0,parcelas:0,encargos:0,total:0,hon20:0,hon20Mes:0,efic25:0,efic25Mes:0});
+        base: acc.base+it.base, parcelas: acc.parcelas+it.parcelas, encargos: acc.encargos+it.encargos, total: acc.total+it.total, 
+        hon20: acc.hon20+it.hon20, hon20Mes: acc.hon20Mes+it.hon20Mes, hon20Dia: acc.hon20Dia+it.hon20Dia,
+        efic25: acc.efic25+it.efic25, efic25Mes: acc.efic25Mes+it.efic25Mes, efic25Dia: acc.efic25Dia+it.efic25Dia,
+        efic20: acc.efic20+it.efic20, efic20Mes: acc.efic20Mes+it.efic20Mes, efic20Dia: acc.efic20Dia+it.efic20Dia
+      }), {
+        base:0, parcelas:0, encargos:0, total:0, 
+        hon20:0, hon20Mes:0, hon20Dia:0, 
+        efic25:0, efic25Mes:0, efic25Dia:0, 
+        efic20:0, efic20Mes:0, efic20Dia:0
+      });
     }
   });
 
@@ -267,65 +273,97 @@ function buildGroups(matrix){
 
 /* ===================== RENDER ===================== */
 function renderHero(){
-  const isMensal = viewMode === 'mensal';
-  const labelTop = isMensal ? 'Potencial Mensal' : 'Potencial Total';
+  let labelTop = 'Potencial Total';
+  if (viewMode === 'mensal') labelTop = 'Potencial Mensal';
+  if (viewMode === 'diario') labelTop = 'Estimativa Diária';
 
   const createCardHtml = (title, data, customClass = '') => {
-    const valPrincipal = isMensal ? data.hon20Mes : data.hon20;
-    const valEfic = isMensal ? data.efic25Mes : data.efic25;
+    let valPrincipal = data.hon20;
+    let valEfic25 = data.efic25;
+    let valEfic20 = data.efic20;
+
+    if (viewMode === 'mensal') {
+      valPrincipal = data.hon20Mes; valEfic25 = data.efic25Mes; valEfic20 = data.efic20Mes;
+    } else if (viewMode === 'diario') {
+      valPrincipal = data.hon20Dia; valEfic25 = data.efic25Dia; valEfic20 = data.efic20Dia;
+    }
 
     return `<div class="pcard ${customClass}">
       <div class="p-lab">${title} <span style="text-transform:none;opacity:0.7;">(${labelTop})</span></div>
       <div class="p-val">${BRL.format(valPrincipal)}</div>
-      <div class="p-val-efic"><span>Eficiência 25%</span> ${BRL.format(valEfic)}</div>
+      <div class="p-val-efic"><span>Eficiência 25%</span> ${BRL.format(valEfic25)}</div>
+      <div class="p-val-efic last"><span>Eficiência 20%</span> ${BRL.format(valEfic20)}</div>
       
       <div class="p-sub highlight">
-        <span>Valor a ser negociado para o Projeto</span>
+        <span>Valor negociado p/ Projeto</span>
         <b>${BRL.format(data.total)}</b>
       </div>
       <div class="p-sub">
-        <span>Quantidade de contratos na base</span>
+        <span>Contratos na base</span>
         <b>${INT.format(data.base)}</b>
       </div>
       <div class="p-sub">
-        <span>Valor a ser recebido de Honorários</span>
+        <span>Hon. 20% (Total base)</span>
         <b>${BRL.format(data.hon20)}</b>
       </div>
       <div class="p-sub">
-        <span>Valor de Honorários em uma eficiência de 25%</span>
+        <span>Efic. 25% (Total base)</span>
         <b>${BRL.format(data.efic25)}</b>
+      </div>
+      <div class="p-sub">
+        <span>Efic. 20% (Total base)</span>
+        <b>${BRL.format(data.efic20)}</b>
       </div>
     </div>`;
   };
 
-  // --- 1. RENDER CARDS DE CATEGORIA ---
-  const geral = globalGroups.reduce((acc,g) => ({
-    base: acc.base+g.subtotal.base, total: acc.total+g.subtotal.total,
-    hon20: acc.hon20+g.subtotal.hon20, hon20Mes: acc.hon20Mes+g.subtotal.hon20Mes,
-    efic25: acc.efic25+g.subtotal.efic25, efic25Mes: acc.efic25Mes+g.subtotal.efic25Mes
-  }), {base:0,total:0,hon20:0,hon20Mes:0,efic25:0,efic25Mes:0});
+  // 1. RENDER CARDS DE CATEGORIA
+  const geral = { base:0, total:0, hon20:0, hon20Mes:0, hon20Dia:0, efic25:0, efic25Mes:0, efic25Dia:0, efic20:0, efic20Mes:0, efic20Dia:0 };
+
+  globalGroups.forEach(g => {
+    const tp = g.tipo.toLowerCase();
+    const isJudicial = tp.includes('judicial') && !tp.includes('pré');
+    
+    if(!isJudicial) {
+      geral.base += g.subtotal.base;
+      geral.total += g.subtotal.total;
+      geral.hon20 += g.subtotal.hon20;
+      geral.hon20Mes += g.subtotal.hon20Mes;
+      geral.hon20Dia += g.subtotal.hon20Dia;
+      geral.efic25 += g.subtotal.efic25;
+      geral.efic25Mes += g.subtotal.efic25Mes;
+      geral.efic25Dia += g.subtotal.efic25Dia;
+      geral.efic20 += g.subtotal.efic20;
+      geral.efic20Mes += g.subtotal.efic20Mes;
+      geral.efic20Dia += g.subtotal.efic20Dia;
+    }
+  });
+
+  const getGroupData = (keyword) => {
+    const g = globalGroups.find(x => x.tipo.toLowerCase().includes(keyword));
+    return g ? g.subtotal : { base:0, total:0, hon20:0, hon20Mes:0, hon20Dia:0, efic25:0, efic25Mes:0, efic25Dia:0, efic20:0, efic20Mes:0, efic20Dia:0 };
+  };
 
   const cardsCat = [];
-  cardsCat.push(createCardHtml('Total Geral', geral, 'geral'));
-  globalGroups.forEach(g => {
-    cardsCat.push(createCardHtml(g.tipo, g.subtotal));
-  });
+  cardsCat.push(createCardHtml('Total Geral', geral, 'geral')); // Sem judicial
+  cardsCat.push(createCardHtml('Condomínio', getGroupData('condom')));
+  cardsCat.push(createCardHtml('Incorporadora', getGroupData('incorporadora')));
+  cardsCat.push(createCardHtml('Pré Judicial', getGroupData('pré')));
+  
   $('#hero').innerHTML = cardsCat.join('');
 
-  // --- 2. RENDER CARDS DE NEGOCIADORES ---
+  // 2. RENDER CARDS DE NEGOCIADORES
   const negData = {
-    'Gabriela': {base:0, total:0, hon20:0, hon20Mes:0, efic25:0, efic25Mes:0},
-    'Matheus': {base:0, total:0, hon20:0, hon20Mes:0, efic25:0, efic25Mes:0},
-    'Gabriella': {base:0, total:0, hon20:0, hon20Mes:0, efic25:0, efic25Mes:0}
+    'Gabriela': {base:0, total:0, hon20:0, hon20Mes:0, hon20Dia:0, efic25:0, efic25Mes:0, efic25Dia:0, efic20:0, efic20Mes:0, efic20Dia:0},
+    'Matheus': {base:0, total:0, hon20:0, hon20Mes:0, hon20Dia:0, efic25:0, efic25Mes:0, efic25Dia:0, efic20:0, efic20Mes:0, efic20Dia:0},
+    'Gabriella': {base:0, total:0, hon20:0, hon20Mes:0, hon20Dia:0, efic25:0, efic25Mes:0, efic25Dia:0, efic20:0, efic20Mes:0, efic20Dia:0}
   };
 
   const addNeg = (tgt, it, prop = 1) => {
-    tgt.base += (it.base * prop);
-    tgt.total += (it.total * prop);
-    tgt.hon20 += (it.hon20 * prop);
-    tgt.hon20Mes += (it.hon20Mes * prop);
-    tgt.efic25 += (it.efic25 * prop);
-    tgt.efic25Mes += (it.efic25Mes * prop);
+    tgt.base += (it.base * prop); tgt.total += (it.total * prop);
+    tgt.hon20 += (it.hon20 * prop); tgt.hon20Mes += (it.hon20Mes * prop); tgt.hon20Dia += (it.hon20Dia * prop);
+    tgt.efic25 += (it.efic25 * prop); tgt.efic25Mes += (it.efic25Mes * prop); tgt.efic25Dia += (it.efic25Dia * prop);
+    tgt.efic20 += (it.efic20 * prop); tgt.efic20Mes += (it.efic20Mes * prop); tgt.efic20Dia += (it.efic20Dia * prop);
   };
 
   globalGroups.forEach(g => {
@@ -341,20 +379,12 @@ function renderHero(){
       } else if (n.includes('golden')) {
         addNeg(negData['Gabriella'], it);
       } else if (n.includes('brava mundo')) {
-        // Lógica de rateio Brava Mundo (Parcelas -> Gabriella | Encargos -> Matheus)
-        const valParcelas = it.parcelas || 0;
-        const valEncargos = it.encargos || 0;
-        const valSoma = valParcelas + valEncargos;
-
+        const valSoma = (it.parcelas || 0) + (it.encargos || 0);
         if (valSoma > 0) {
-          const propGab = valParcelas / valSoma;
-          const propMat = valEncargos / valSoma;
-          addNeg(negData['Gabriella'], it, propGab);
-          addNeg(negData['Matheus'], it, propMat);
+          addNeg(negData['Gabriella'], it, (it.parcelas || 0) / valSoma);
+          addNeg(negData['Matheus'], it, (it.encargos || 0) / valSoma);
         } else {
-          // Fallback seguro se ambos forem zero
-          addNeg(negData['Gabriella'], it, 0.5);
-          addNeg(negData['Matheus'], it, 0.5);
+          addNeg(negData['Gabriella'], it, 0.5); addNeg(negData['Matheus'], it, 0.5);
         }
       }
     });
@@ -362,7 +392,6 @@ function renderHero(){
 
   const cardsNeg = [];
   Object.keys(negData).sort().forEach(nome => {
-    // Só renderiza se tiver algum valor (evita cards zerados caso mude a base de dados)
     if(negData[nome].total > 0 || negData[nome].base > 0) {
        cardsNeg.push(createCardHtml(nome, negData[nome], 'negociador'));
     }
@@ -373,7 +402,7 @@ function renderHero(){
 function renderTables(){
   if(!globalGroups.length){ $('#tables').innerHTML = '<div class="empty">Nenhum dado encontrado na planilha.</div>'; return; }
   
-  const isMensal = viewMode === 'mensal';
+  const isFrac = viewMode === 'mensal' || viewMode === 'diario';
   let html = '';
   
   globalGroups.forEach(g => {
@@ -386,22 +415,28 @@ function renderTables(){
       <th class="num">Parcelas/Taxas</th>`;
       
     if(!isCondominio) html += `<th class="num">Encargos</th>`;
-    
     html += `<th class="num">Total</th>`;
     
-    if(isMensal) {
+    if(viewMode === 'mensal') {
       html += `<th class="num mth" style="color:var(--brand2)">Hon. 20%/mês</th>
-               <th class="num mth" style="color:var(--good)">Efic. 25%/mês</th>`;
+               <th class="num mth" style="color:var(--good)">Efic. 25%/mês</th>
+               <th class="num mth" style="color:var(--good)">Efic. 20%/mês</th>`;
+    } else if(viewMode === 'diario') {
+      html += `<th class="num mth" style="color:var(--brand2)">Hon. 20%/dia</th>
+               <th class="num mth" style="color:var(--good)">Efic. 25%/dia</th>
+               <th class="num mth" style="color:var(--good)">Efic. 20%/dia</th>`;
     } else {
-      html += `<th class="num" style="color:var(--brand2)">Honorários 20%</th>
-               <th class="num" style="color:var(--good)">Eficiência 25%</th>`;
+      html += `<th class="num" style="color:var(--brand2)">Hon. 20%</th>
+               <th class="num" style="color:var(--good)">Efic. 25%</th>
+               <th class="num" style="color:var(--good)">Efic. 20%</th>`;
     }
     
     html += `</tr></thead><tbody>`;
     
     g.items.forEach(it => {
-      const vHon = isMensal ? it.hon20Mes : it.hon20;
-      const vEfic = isMensal ? it.efic25Mes : it.efic25;
+      let vHon = it.hon20, vEfic25 = it.efic25, vEfic20 = it.efic20;
+      if (viewMode === 'mensal') { vHon = it.hon20Mes; vEfic25 = it.efic25Mes; vEfic20 = it.efic20Mes; }
+      if (viewMode === 'diario') { vHon = it.hon20Dia; vEfic25 = it.efic25Dia; vEfic20 = it.efic20Dia; }
 
       html += `<tr>
         <td>${it.nome}</td>
@@ -411,13 +446,15 @@ function renderTables(){
       if(!isCondominio) html += `<td class="num">${BRL.format(it.encargos)}</td>`;
       
       html += `<td class="num">${BRL.format(it.total)}</td>
-        <td class="num ${isMensal ? 'mth' : ''}" style="font-weight:600;">${BRL.format(vHon)}</td>
-        <td class="num ${isMensal ? 'mth' : ''}" style="font-weight:600;">${BRL.format(vEfic)}</td>
+        <td class="num ${isFrac ? 'mth' : ''}" style="font-weight:600;">${BRL.format(vHon)}</td>
+        <td class="num ${isFrac ? 'mth' : ''}" style="font-weight:600;">${BRL.format(vEfic25)}</td>
+        <td class="num ${isFrac ? 'mth' : ''}" style="font-weight:600;">${BRL.format(vEfic20)}</td>
       </tr>`;
     });
 
-    const subHon = isMensal ? g.subtotal.hon20Mes : g.subtotal.hon20;
-    const subEfic = isMensal ? g.subtotal.efic25Mes : g.subtotal.efic25;
+    let subHon = g.subtotal.hon20, subEfic25 = g.subtotal.efic25, subEfic20 = g.subtotal.efic20;
+    if (viewMode === 'mensal') { subHon = g.subtotal.hon20Mes; subEfic25 = g.subtotal.efic25Mes; subEfic20 = g.subtotal.efic20Mes; }
+    if (viewMode === 'diario') { subHon = g.subtotal.hon20Dia; subEfic25 = g.subtotal.efic25Dia; subEfic20 = g.subtotal.efic20Dia; }
 
     html += `<tr class="subtotal">
       <td class="tp">Total</td>
@@ -427,8 +464,9 @@ function renderTables(){
     if(!isCondominio) html += `<td class="num">${BRL.format(g.subtotal.encargos)}</td>`;
     
     html += `<td class="num">${BRL.format(g.subtotal.total)}</td>
-      <td class="num ${isMensal ? 'mth' : ''}">${BRL.format(subHon)}</td>
-      <td class="num ${isMensal ? 'mth' : ''}">${BRL.format(subEfic)}</td>
+      <td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subHon)}</td>
+      <td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subEfic25)}</td>
+      <td class="num ${isFrac ? 'mth' : ''}">${BRL.format(subEfic20)}</td>
     </tr>`;
     
     html += '</tbody></table></div>';
@@ -444,8 +482,16 @@ function setStatus(kind, msg){
 
 /* ===================== INTERAÇÕES E INICIALIZAÇÃO ===================== */
 $('#btnToggleMode').onclick = (e) => {
-  viewMode = viewMode === 'total' ? 'mensal' : 'total';
-  e.target.innerHTML = viewMode === 'total' ? '📅 Ver Mensal' : '💰 Ver Total';
+  if (viewMode === 'total') {
+    viewMode = 'mensal';
+    e.target.innerHTML = '☀️ Ver Diário';
+  } else if (viewMode === 'mensal') {
+    viewMode = 'diario';
+    e.target.innerHTML = '💰 Ver Total';
+  } else {
+    viewMode = 'total';
+    e.target.innerHTML = '📅 Ver Mensal';
+  }
   renderHero();
   renderTables();
 };
