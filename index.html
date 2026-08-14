@@ -347,7 +347,12 @@ function renderCharts() {
     return item.hon20;
   };
 
-  const colors = ['#16365c', '#c8a04a', '#2f6ea8', '#4a9bd4', '#178f60', '#94a2b6', '#cf4055'];
+  /* Expansão da paleta de cores para cobrir até 15 empreendimentos/linhas sem que o gráfico falhe */
+  const colors = [
+    '#16365c', '#c8a04a', '#2f6ea8', '#4a9bd4', '#178f60', '#94a2b6', '#cf4055',
+    '#395b85', '#d4b26a', '#1e4b7a', '#73b0d9', '#24a873', '#627082', '#a63344',
+    '#0f223a'
+  ];
 
   const createDoughnut = (id, title, labels, data) => {
     const ctx = document.getElementById(id);
