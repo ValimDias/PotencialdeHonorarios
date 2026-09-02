@@ -22,7 +22,8 @@
   --gold:#c8a04a;
   --good:#178f60;
   --bad:#cf4055;
-  --shadow:0 1px 2px rgba(16,32,54,.05),0 8px 22px rgba(16,32,54,.07);
+  --shadow:0 1px 2px rgba(16,32,54,.05),
+           0 8px 22px rgba(16,32,54,.07);
 }
 
 :root[data-theme="dark"]{
@@ -34,7 +35,8 @@
   --line:#26354b;
   --brand:#8db8de;
   --brand2:#5da3d8;
-  --shadow:0 1px 3px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.35);
+  --shadow:0 1px 3px rgba(0,0,0,.3),
+           0 10px 26px rgba(0,0,0,.35);
 }
 
 *{
@@ -49,7 +51,14 @@ body{
 body{
   background:var(--bg);
   color:var(--ink);
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  font-family:'Inter',
+              -apple-system,
+              BlinkMacSystemFont,
+              'Segoe UI',
+              Roboto,
+              Helvetica,
+              Arial,
+              sans-serif;
   font-size:14px;
   line-height:1.45;
   -webkit-font-smoothing:antialiased;
@@ -70,7 +79,11 @@ header.top{
 }
 
 .logo-chip{
-  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  background:linear-gradient(
+    135deg,
+    var(--brand),
+    var(--brand2)
+  );
   border-radius:12px;
   padding:9px 16px;
   box-shadow:var(--shadow);
@@ -125,7 +138,11 @@ button:hover{
 }
 
 .btn-primary{
-  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  background:linear-gradient(
+    135deg,
+    var(--brand),
+    var(--brand2)
+  );
   color:#fff;
   border:none;
 }
@@ -201,7 +218,7 @@ button:hover{
   align-items:stretch;
 }
 
-@media (max-width:1024px){
+@media(max-width:1024px){
   .dashboard-top{
     grid-template-columns:1fr;
   }
@@ -213,13 +230,13 @@ button:hover{
   gap:12px;
 }
 
-@media (max-width:800px){
+@media(max-width:800px){
   .hero{
     grid-template-columns:repeat(2,1fr);
   }
 }
 
-@media (max-width:500px){
+@media(max-width:500px){
   .hero{
     grid-template-columns:1fr;
   }
@@ -250,6 +267,7 @@ button:hover{
   padding:12px 14px 12px;
   box-shadow:var(--shadow);
   border-top:3px solid var(--brand2);
+
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -257,7 +275,11 @@ button:hover{
 
 .pcard.geral{
   border-top-color:var(--gold);
-  background:linear-gradient(135deg,var(--panel),var(--panel2));
+  background:linear-gradient(
+    135deg,
+    var(--panel),
+    var(--panel2)
+  );
 }
 
 .pcard.negociador{
@@ -290,6 +312,7 @@ button:hover{
   font-weight:800;
   color:var(--good);
   margin-top:4px;
+
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -311,6 +334,7 @@ button:hover{
   font-size:10.5px;
   margin-top:6px;
   color:var(--muted);
+
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -359,7 +383,7 @@ button:hover{
   margin-bottom:24px;
 }
 
-@media (max-width:900px){
+@media(max-width:900px){
   .group-layout{
     grid-template-columns:1fr;
   }
@@ -473,85 +497,100 @@ footer{
 
 <div class="wrap">
 
-  <header class="top">
+<header class="top">
 
-    <div class="logo-chip">VD</div>
+  <div class="logo-chip">
+    VD
+  </div>
 
-    <div class="ttl">
-      <h1>Potencial de Honorários</h1>
-      <div class="sub">Valim Dias · dados ao vivo da planilha</div>
+  <div class="ttl">
+    <h1>Potencial de Honorários</h1>
+    <div class="sub">
+      Valim Dias · dados ao vivo da planilha
     </div>
+  </div>
 
-    <div class="actions">
-      <button id="btnTheme">🌙</button>
-      <button id="btnToggleMode" class="btn-outline">📅 Ver Mensal</button>
-      <button id="btnRefresh" class="btn-primary">↻ Atualizar</button>
-    </div>
+  <div class="actions">
 
-    <div class="status" id="status">
-      <span class="dot load"></span>Carregando planilha…
-    </div>
+    <button id="btnTheme">
+      🌙
+    </button>
 
-  </header>
+    <button id="btnToggleMode" class="btn-outline">
+      📅 Ver Mensal
+    </button>
 
-
-  <div class="section-title">Resumo por Categoria</div>
-
-
-  <div class="dashboard-top">
-
-    <div class="hero" id="hero"></div>
-
-    <div class="chart-top-container">
-      <div class="chart-wrapper">
-        <canvas id="chartMain"></canvas>
-      </div>
-    </div>
+    <button id="btnRefresh" class="btn-primary">
+      ↻ Atualizar
+    </button>
 
   </div>
 
+  <div class="status" id="status">
+    <span class="dot load"></span>
+    Carregando planilha…
+  </div>
 
-  <div class="card" style="margin-top:16px;">
+</header>
 
-    <h2>Detalhamento por tipo e empreendimento</h2>
+<div class="section-title">
+  Resumo por Categoria
+</div>
 
-    <div class="hint">
-      Alterne entre as visões usando o botão no topo da página.
+<div class="dashboard-top">
+
+  <div class="hero" id="hero"></div>
+
+  <div class="chart-top-container">
+    <div class="chart-wrapper">
+      <canvas id="chartMain"></canvas>
     </div>
-
-    <div id="tables"></div>
-
   </div>
-
-
-  <div class="section-title" style="margin-top:32px;">
-    Resumo por Negociador
-  </div>
-
-  <div
-    class="hero"
-    style="grid-template-columns:repeat(3,1fr);"
-    id="hero-neg">
-  </div>
-
-
-  <footer>
-    Fonte: Google Sheets — atualiza automaticamente ao carregar a página.
-    Use "Atualizar" para forçar uma nova leitura.
-  </footer>
 
 </div>
 
+<div class="card" style="margin-top:16px;">
+
+  <h2>
+    Detalhamento por tipo e empreendimento
+  </h2>
+
+  <div class="hint">
+    Alterne entre as visões usando o botão no topo da página.
+  </div>
+
+  <div id="tables"></div>
+
+</div>
+
+<div class="section-title" style="margin-top:32px;">
+  Resumo por Negociador
+</div>
+
+<div
+  class="hero"
+  style="grid-template-columns:repeat(3,1fr);"
+  id="hero-neg">
+</div>
+
+<footer>
+  Fonte: Google Sheets — atualiza automaticamente ao carregar a página.
+  Use "Atualizar" para forçar uma nova leitura.
+</footer>
+
+</div>
 
 <script>
 
-/* ===================== CONFIG ===================== */
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
 
 const GID = '0';
 
 const MESES = 2;
-const DIAS_UTEIS = 20;
 
+const DIAS_UTEIS = 20;
 
 const CSV_URLS = [
 
@@ -561,7 +600,6 @@ const CSV_URLS = [
 
 ];
 
-
 const BRL = new Intl.NumberFormat(
   'pt-BR',
   {
@@ -570,17 +608,13 @@ const BRL = new Intl.NumberFormat(
   }
 );
 
-
 const INT = new Intl.NumberFormat(
   'pt-BR',
   {
-    maximumFractionDigits:0
+    minimumFractionDigits:0,
+    maximumFractionDigits:1
   }
 );
-
-
-const $ = s => document.querySelector(s);
-
 
 let globalGroups = [];
 
@@ -590,8 +624,12 @@ let viewMode = 'total';
 
 let chartInstances = {};
 
+const $ = s => document.querySelector(s);
 
-/* ===================== FETCH ===================== */
+
+/* =========================================================
+   BUSCA CSV
+========================================================= */
 
 async function fetchSheetCSV(){
 
@@ -601,22 +639,26 @@ async function fetchSheetCSV(){
 
     try{
 
-      const response = await fetch(
-        url,
-        {
-          cache:'no-store'
-        }
-      );
+      const response =
+        await fetch(
+          url,
+          {
+            cache:'no-store'
+          }
+        );
 
-      const text = await response.text();
+      const text =
+        await response.text();
 
       const pareceHTML =
         /<html|accounts\.google\.com|sign in/i.test(
           text.slice(0,500)
         );
 
-
-      if(!response.ok || pareceHTML){
+      if(
+        !response.ok ||
+        pareceHTML
+      ){
 
         lastErr =
           'A planilha retornou login em vez de CSV. Confirme o compartilhamento.';
@@ -625,9 +667,7 @@ async function fetchSheetCSV(){
 
       }
 
-
       return text;
-
 
     }catch(e){
 
@@ -644,7 +684,6 @@ async function fetchSheetCSV(){
 
   }
 
-
   throw new Error(
     lastErr ||
     'Falha desconhecida ao buscar a planilha.'
@@ -653,7 +692,9 @@ async function fetchSheetCSV(){
 }
 
 
-/* ===================== PARSER CSV ===================== */
+/* =========================================================
+   PARSER CSV
+========================================================= */
 
 function parseCSV(text){
 
@@ -665,17 +706,24 @@ function parseCSV(text){
 
   let inQuotes = false;
 
+  for(
+    let i = 0;
+    i < text.length;
+    i++
+  ){
 
-  for(let i=0;i<text.length;i++){
+    const c =
+      text[i];
 
-    const c = text[i];
-
-    const next = text[i+1];
-
+    const next =
+      text[i + 1];
 
     if(inQuotes){
 
-      if(c === '"' && next === '"'){
+      if(
+        c === '"' &&
+        next === '"'
+      ){
 
         field += '"';
 
@@ -683,7 +731,9 @@ function parseCSV(text){
 
       }
 
-      else if(c === '"'){
+      else if(
+        c === '"'
+      ){
 
         inQuotes = false;
 
@@ -715,8 +765,6 @@ function parseCSV(text){
 
       else if(c === '\r'){
 
-        /* ignora */
-
       }
 
       else if(c === '\n'){
@@ -741,8 +789,10 @@ function parseCSV(text){
 
   }
 
-
-  if(field.length > 0 || row.length > 0){
+  if(
+    field.length > 0 ||
+    row.length > 0
+  ){
 
     row.push(field);
 
@@ -750,215 +800,516 @@ function parseCSV(text){
 
   }
 
-
   return rows.filter(
-    r => r.some(
-      cell => (cell || '').trim() !== ''
-    )
+    r =>
+      r.some(
+        cell =>
+          (cell || '').trim() !== ''
+      )
   );
 
 }
 
 
-/* ===================== NÚMEROS ===================== */
+/* =========================================================
+   CONVERSÃO NUMÉRICA
+========================================================= */
 
 function parseNumBR(v){
 
-  if(v == null) return 0;
+  if(v == null){
+    return 0;
+  }
 
+  let s =
+    String(v).trim();
 
-  let s = String(v).trim();
+  if(s === ''){
+    return 0;
+  }
 
-
-  if(s === '') return 0;
-
-
-  s = s
-    .replace(/R\$\s?/gi,'')
-    .replace(/\s/g,'');
-
+  s =
+    s
+      .replace(/R\$\s?/gi,'')
+      .replace(/\s/g,'');
 
   if(
     s.indexOf(',') > -1 &&
     s.indexOf('.') > -1
   ){
 
-    s = s
-      .replace(/\./g,'')
-      .replace(',','.');
+    s =
+      s
+        .replace(/\./g,'')
+        .replace(',','.');
 
   }
 
-  else if(s.indexOf(',') > -1){
+  else if(
+    s.indexOf(',') > -1
+  ){
 
-    s = s.replace(',','.');
+    s =
+      s.replace(',','.');
 
   }
 
+  const n =
+    parseFloat(s);
 
-  const n = parseFloat(s);
-
-
-  return isNaN(n) ? 0 : n;
+  return isNaN(n)
+    ? 0
+    : n;
 
 }
 
 
-/* ===================== CRIA DADOS COMPLETOS ===================== */
+/* =========================================================
+   VALORES MENSAIS / DIÁRIOS
+========================================================= */
 
-/*
-  NOVA ORDEM DA PLANILHA:
+function addPeriodValues(obj){
 
-  EMPREENDIMENTO / NEGOCIADOR
-  +1 BASE
-  +2 QTD CONTRATOS PARCELAS
-  +3 VALOR PARCELAS
-  +4 QTD CONTRATOS ENCARGOS
-  +5 VALOR ENCARGOS
-  +6 TOTAL
-  +7 HONORÁRIOS 20%
-  +8 EFICIÊNCIA 25%
-  +9 EFICIÊNCIA 20%
-*/
+  const divisorMensal =
+    MESES;
+
+  const divisorDiario =
+    MESES * DIAS_UTEIS;
 
 
-function criarDados(
-  nome,
-  base,
-  contratosParcelas,
-  parcelas,
-  contratosEncargos,
-  encargos,
-  total,
-  hon20,
-  efic25,
-  efic20
+  obj.baseMes =
+    obj.base / divisorMensal;
+
+  obj.baseDia =
+    obj.base / divisorDiario;
+
+
+  obj.contratosParcelasMes =
+    obj.contratosParcelas / divisorMensal;
+
+  obj.contratosParcelasDia =
+    obj.contratosParcelas / divisorDiario;
+
+
+  obj.parcelasMes =
+    obj.parcelas / divisorMensal;
+
+  obj.parcelasDia =
+    obj.parcelas / divisorDiario;
+
+
+  obj.contratosEncargosMes =
+    obj.contratosEncargos / divisorMensal;
+
+  obj.contratosEncargosDia =
+    obj.contratosEncargos / divisorDiario;
+
+
+  obj.encargosMes =
+    obj.encargos / divisorMensal;
+
+  obj.encargosDia =
+    obj.encargos / divisorDiario;
+
+
+  obj.totalMes =
+    obj.total / divisorMensal;
+
+  obj.totalDia =
+    obj.total / divisorDiario;
+
+
+  obj.hon20Mes =
+    obj.hon20 / divisorMensal;
+
+  obj.hon20Dia =
+    obj.hon20 / divisorDiario;
+
+
+  obj.efic25Mes =
+    obj.efic25 / divisorMensal;
+
+  obj.efic25Dia =
+    obj.efic25 / divisorDiario;
+
+
+  obj.efic20Mes =
+    obj.efic20 / divisorMensal;
+
+  obj.efic20Dia =
+    obj.efic20 / divisorDiario;
+
+
+  return obj;
+
+}
+
+
+/* =========================================================
+   CRIA OBJETO DE UMA LINHA DE EMPREENDIMENTO
+========================================================= */
+
+function criarLinhaDados(
+  r,
+  nomeIdx
 ){
 
-  return {
+  const base =
+    parseNumBR(
+      r[nomeIdx + 1]
+    );
 
-    nome,
+  /*
+    NOVA ESTRUTURA:
+
+    +1 Base
+    +2 Quantidade contratos Parcelas/Taxas
+    +3 Parcelas/Taxas
+    +4 Quantidade contratos Encargos
+    +5 Encargos
+    +6 Total
+    +7 Honorários 20%
+    +8 Eficiência 25%
+    +9 Eficiência 20%
+  */
+
+  const contratosParcelas =
+    parseNumBR(
+      r[nomeIdx + 2]
+    );
+
+  const parcelas =
+    parseNumBR(
+      r[nomeIdx + 3]
+    );
+
+  const contratosEncargos =
+    parseNumBR(
+      r[nomeIdx + 4]
+    );
+
+  const encargos =
+    parseNumBR(
+      r[nomeIdx + 5]
+    );
+
+  const total =
+    parseNumBR(
+      r[nomeIdx + 6]
+    );
+
+  const hon20 =
+    parseNumBR(
+      r[nomeIdx + 7]
+    );
+
+  const efic25 =
+    parseNumBR(
+      r[nomeIdx + 8]
+    );
+
+  const efic20 =
+    parseNumBR(
+      r[nomeIdx + 9]
+    );
+
+
+  return addPeriodValues({
 
     base,
+
     contratosParcelas,
+
     parcelas,
+
     contratosEncargos,
+
     encargos,
+
     total,
+
     hon20,
+
     efic25,
-    efic20,
 
+    efic20
 
-    /* MENSAL */
-
-    baseMes: base / MESES,
-
-    contratosParcelasMes:
-      contratosParcelas / MESES,
-
-    parcelasMes:
-      parcelas / MESES,
-
-    contratosEncargosMes:
-      contratosEncargos / MESES,
-
-    encargosMes:
-      encargos / MESES,
-
-    totalMes:
-      total / MESES,
-
-    hon20Mes:
-      hon20 / MESES,
-
-    efic25Mes:
-      efic25 / MESES,
-
-    efic20Mes:
-      efic20 / MESES,
-
-
-    /* DIÁRIO */
-
-    baseDia:
-      base / MESES / DIAS_UTEIS,
-
-    contratosParcelasDia:
-      contratosParcelas / MESES / DIAS_UTEIS,
-
-    parcelasDia:
-      parcelas / MESES / DIAS_UTEIS,
-
-    contratosEncargosDia:
-      contratosEncargos / MESES / DIAS_UTEIS,
-
-    encargosDia:
-      encargos / MESES / DIAS_UTEIS,
-
-    totalDia:
-      total / MESES / DIAS_UTEIS,
-
-    hon20Dia:
-      hon20 / MESES / DIAS_UTEIS,
-
-    efic25Dia:
-      efic25 / MESES / DIAS_UTEIS,
-
-    efic20Dia:
-      efic20 / MESES / DIAS_UTEIS
-
-  };
+  });
 
 }
 
 
-/* ===================== MONTA GRUPOS ===================== */
+/* =========================================================
+   MONTA GRUPOS
+========================================================= */
 
 function buildGroups(matrix){
 
   const groups = [];
 
-
   globalNegociadores = {};
-
 
   let current = null;
 
   let nomeIdx = -1;
 
-  let isNegociadorMode = false;
+  let lendoNegociadores = false;
 
 
-  for(let i=0;i<matrix.length;i++){
+  for(
+    let i = 0;
+    i < matrix.length;
+    i++
+  ){
 
-    const r = matrix[i];
-
-    if(!r) continue;
-
-
-    const lowerRow = r.map(
-      c => (c || '')
-        .toString()
-        .toLowerCase()
-        .trim()
-    );
+    const r =
+      matrix[i];
 
 
-    /* =====================
+    if(!r){
+      continue;
+    }
+
+
+    const lowerRow =
+      r.map(
+        c =>
+          (c || '')
+            .toString()
+            .toLowerCase()
+            .trim()
+      );
+
+
+    /* =====================================================
+       DETECTA BLOCO DE NEGOCIADORES
+
+       A planilha possui:
+
+       B29 = Negociador
+       C29 = Gabriella
+       D29 = quantidade de contratos
+
+       B30 = vazio
+       C30 = Gabriela
+       D30 = quantidade de contratos
+
+       B31 = vazio
+       C31 = Matheus
+       D31 = quantidade de contratos
+    ===================================================== */
+
+    const negIdx =
+      lowerRow.indexOf(
+        'negociador'
+      );
+
+
+    if(
+      negIdx !== -1
+    ){
+
+      lendoNegociadores = true;
+
+      nomeIdx =
+        negIdx + 1;
+
+
+      /*
+        IMPORTANTE:
+
+        Não usamos "continue" aqui.
+
+        A própria linha 29 contém
+        os dados da Gabriella.
+
+        Portanto ela já será processada
+        logo abaixo.
+      */
+
+    }
+
+
+    /* =====================================================
+       SE ESTAMOS NO BLOCO DE NEGOCIADORES
+    ===================================================== */
+
+    if(
+      lendoNegociadores &&
+      nomeIdx !== -1
+    ){
+
+      const nome =
+        (r[nomeIdx] || '')
+          .trim();
+
+
+      /*
+        Só considera linhas que realmente
+        possuem nome de negociador.
+
+        Para o resumo da planilha:
+
+        D29:D31 = contratos
+        F29:F31 = parcelas/taxas
+        H29:H31 = encargos
+        I29:I31 = total
+        J29:J31 = honorários
+        K29:K31 = eficiência 25%
+        L29:L31 = eficiência 20%
+      */
+
+      if(nome){
+
+        /*
+          COLUNA D
+          índice 3
+
+          É daqui que vem o total
+          de contratos dos negociadores.
+        */
+
+        const base =
+          parseNumBR(
+            r[3]
+          );
+
+
+        /*
+          F = índice 5
+        */
+
+        const parcelas =
+          parseNumBR(
+            r[5]
+          );
+
+
+        /*
+          H = índice 7
+        */
+
+        const encargos =
+          parseNumBR(
+            r[7]
+          );
+
+
+        /*
+          I = índice 8
+        */
+
+        const total =
+          parseNumBR(
+            r[8]
+          );
+
+
+        /*
+          J = índice 9
+        */
+
+        const hon20 =
+          parseNumBR(
+            r[9]
+          );
+
+
+        /*
+          K = índice 10
+        */
+
+        const efic25 =
+          parseNumBR(
+            r[10]
+          );
+
+
+        /*
+          L = índice 11
+        */
+
+        const efic20 =
+          parseNumBR(
+            r[11]
+          );
+
+
+        const negociador =
+          addPeriodValues({
+
+            base,
+
+            contratosParcelas:0,
+
+            parcelas,
+
+            contratosEncargos:0,
+
+            encargos,
+
+            total,
+
+            hon20,
+
+            efic25,
+
+            efic20
+
+          });
+
+
+        /*
+          NÃO sobrescreve caso haja
+          nomes iguais.
+
+          Exemplo:
+
+          Gabriella
+          Gabriela
+
+          são tratados exatamente
+          como aparecem na planilha.
+        */
+
+        globalNegociadores[nome] =
+          negociador;
+
+
+        /*
+          Se já chegamos ao bloco
+          de negociadores, não devemos
+          tentar interpretar essas linhas
+          como empreendimentos.
+        */
+
+        continue;
+
+      }
+
+    }
+
+
+    /* =====================================================
        DETECTA EMPREENDIMENTO
-    ===================== */
+    ===================================================== */
 
     const possibleNomeIdx =
-      lowerRow.indexOf('empreendimento');
+      lowerRow.indexOf(
+        'empreendimento'
+      );
 
 
-    if(possibleNomeIdx !== -1){
+    if(
+      possibleNomeIdx !== -1
+    ){
 
-      nomeIdx = possibleNomeIdx;
+      nomeIdx =
+        possibleNomeIdx;
 
 
-      let tipo = 'Outros';
+      let tipo =
+        'Outros';
 
 
       if(
@@ -967,7 +1318,8 @@ function buildGroups(matrix){
         r[nomeIdx - 1].trim() !== ''
       ){
 
-        tipo = r[nomeIdx - 1].trim();
+        tipo =
+          r[nomeIdx - 1].trim();
 
       }
 
@@ -975,42 +1327,21 @@ function buildGroups(matrix){
       current = {
 
         tipo,
+
         items:[],
+
         subtotal:null
 
       };
 
 
-      groups.push(current);
+      groups.push(
+        current
+      );
 
 
-      isNegociadorMode = false;
-
-
-      continue;
-
-    }
-
-
-    /* =====================
-       DETECTA NEGOCIADOR
-    ===================== */
-
-    const possibleNegIdx =
-      lowerRow.indexOf('negociador');
-
-
-    if(possibleNegIdx !== -1){
-
-      isNegociadorMode = true;
-
-
-      /*
-        O nome do negociador fica
-        imediatamente à direita de "Negociador"
-      */
-
-      nomeIdx = possibleNegIdx + 1;
+      lendoNegociadores =
+        false;
 
 
       continue;
@@ -1018,120 +1349,14 @@ function buildGroups(matrix){
     }
 
 
-    /* =====================
-       LEITURA NEGOCIADORES
-    ===================== */
-
-    if(isNegociadorMode){
-
-      if(nomeIdx !== -1){
-
-        const nome =
-          (r[nomeIdx] || '').trim();
-
-
-        if(
-          nome &&
-          nome.toLowerCase() !== 'total' &&
-          nome.toLowerCase() !== 'negociador'
-        ){
-
-          const base =
-            parseNumBR(r[nomeIdx + 1]);
-
-
-          const contratosParcelas =
-            parseNumBR(r[nomeIdx + 2]);
-
-
-          const parcelas =
-            parseNumBR(r[nomeIdx + 3]);
-
-
-          const contratosEncargos =
-            parseNumBR(r[nomeIdx + 4]);
-
-
-          const encargos =
-            parseNumBR(r[nomeIdx + 5]);
-
-
-          const total =
-            parseNumBR(r[nomeIdx + 6]);
-
-
-          const hon20 =
-            parseNumBR(r[nomeIdx + 7]);
-
-
-          const efic25 =
-            parseNumBR(r[nomeIdx + 8]);
-
-
-          const efic20 =
-            parseNumBR(r[nomeIdx + 9]);
-
-
-          const nomeFormatado =
-            nome
-              .split(' ')
-              .map(
-                p =>
-                  p.charAt(0).toUpperCase() +
-                  p.slice(1).toLowerCase()
-              )
-              .join(' ');
-
-
-          globalNegociadores[nomeFormatado] =
-            criarDados(
-              nomeFormatado,
-              base,
-              contratosParcelas,
-              parcelas,
-              contratosEncargos,
-              encargos,
-              total,
-              hon20,
-              efic25,
-              efic20
-            );
-
-        }
-
-      }
-
-
-      continue;
-
-    }
-
-
-    /* =====================
-       LEITURA EMPREENDIMENTOS
-    ===================== */
-
-    if(!current || nomeIdx === -1){
-
-      continue;
-
-    }
-
-
-    const nome =
-      (r[nomeIdx] || '').trim();
-
-
-    if(!nome){
-
-      continue;
-
-    }
-
+    /* =====================================================
+       SE NÃO ESTÁ EM GRUPO DE EMPREENDIMENTO
+    ===================================================== */
 
     if(
-      nome.toLowerCase().includes('total') ||
-      nome.toLowerCase() === 'empreendimento'
+      !current ||
+      nomeIdx === -1 ||
+      lendoNegociadores
     ){
 
       continue;
@@ -1139,130 +1364,119 @@ function buildGroups(matrix){
     }
 
 
-    const base =
-      parseNumBR(r[nomeIdx + 1]);
+    const nome =
+      (r[nomeIdx] || '')
+        .trim();
 
 
-    const contratosParcelas =
-      parseNumBR(r[nomeIdx + 2]);
+    if(!nome){
+      continue;
+    }
 
 
-    const parcelas =
-      parseNumBR(r[nomeIdx + 3]);
+    if(
+      nome
+        .toLowerCase()
+        .includes('total') ||
+      nome
+        .toLowerCase() ===
+        'empreendimento'
+    ){
 
+      continue;
 
-    const contratosEncargos =
-      parseNumBR(r[nomeIdx + 4]);
-
-
-    const encargos =
-      parseNumBR(r[nomeIdx + 5]);
-
-
-    const total =
-      parseNumBR(r[nomeIdx + 6]);
-
-
-    const hon20 =
-      parseNumBR(r[nomeIdx + 7]);
-
-
-    const efic25 =
-      parseNumBR(r[nomeIdx + 8]);
-
-
-    const efic20 =
-      parseNumBR(r[nomeIdx + 9]);
+    }
 
 
     const linha =
-      criarDados(
-        nome,
-        base,
-        contratosParcelas,
-        parcelas,
-        contratosEncargos,
-        encargos,
-        total,
-        hon20,
-        efic25,
-        efic20
+      criarLinhaDados(
+        r,
+        nomeIdx
       );
 
 
-    current.items.push(linha);
+    linha.nome =
+      nome;
+
+
+    current.items.push(
+      linha
+    );
 
   }
 
 
-  /* =====================
-     CALCULA SUBTOTAIS
-  ===================== */
+  /* =====================================================
+     SUBTOTAIS
+  ===================================================== */
 
-  groups.forEach(g => {
+  groups.forEach(
+    g => {
 
-    g.subtotal =
-      g.items.reduce(
+      const subtotal = {
 
-        (acc,it) => {
+        base:0,
 
-          Object.keys(acc).forEach(key => {
+        contratosParcelas:0,
 
-            if(
-              typeof acc[key] === 'number' &&
-              typeof it[key] === 'number'
-            ){
+        parcelas:0,
 
-              acc[key] += it[key];
+        contratosEncargos:0,
 
-            }
+        encargos:0,
 
-          });
+        total:0,
+
+        hon20:0,
+
+        efic25:0,
+
+        efic20:0
+
+      };
 
 
-          return acc;
+      g.items.forEach(
+        it => {
 
-        },
+          subtotal.base +=
+            it.base;
 
-        {
+          subtotal.contratosParcelas +=
+            it.contratosParcelas;
 
-          nome:'',
+          subtotal.parcelas +=
+            it.parcelas;
 
-          base:0,
-          contratosParcelas:0,
-          parcelas:0,
-          contratosEncargos:0,
-          encargos:0,
-          total:0,
-          hon20:0,
-          efic25:0,
-          efic20:0,
+          subtotal.contratosEncargos +=
+            it.contratosEncargos;
 
-          baseMes:0,
-          contratosParcelasMes:0,
-          parcelasMes:0,
-          contratosEncargosMes:0,
-          encargosMes:0,
-          totalMes:0,
-          hon20Mes:0,
-          efic25Mes:0,
-          efic20Mes:0,
+          subtotal.encargos +=
+            it.encargos;
 
-          baseDia:0,
-          contratosParcelasDia:0,
-          parcelasDia:0,
-          contratosEncargosDia:0,
-          encargosDia:0,
-          totalDia:0,
-          hon20Dia:0,
-          efic25Dia:0,
-          efic20Dia:0
+          subtotal.total +=
+            it.total;
+
+          subtotal.hon20 +=
+            it.hon20;
+
+          subtotal.efic25 +=
+            it.efic25;
+
+          subtotal.efic20 +=
+            it.efic20;
 
         }
-
       );
 
-  });
+
+      g.subtotal =
+        addPeriodValues(
+          subtotal
+        );
+
+    }
+  );
 
 
   return groups;
@@ -1270,52 +1484,81 @@ function buildGroups(matrix){
 }
 
 
-/* ===================== VALOR CONFORME VISÃO ===================== */
+/* =========================================================
+   PEGA VALOR CONFORME A VISÃO
+========================================================= */
 
-function getModeValue(item, campo){
+function getValue(
+  data,
+  campo
+){
 
-  if(viewMode === 'mensal'){
+  if(
+    viewMode === 'mensal'
+  ){
 
-    return item[campo + 'Mes'] || 0;
+    return data[
+      campo + 'Mes'
+    ] ?? 0;
 
   }
 
 
-  if(viewMode === 'diario'){
+  if(
+    viewMode === 'diario'
+  ){
 
-    return item[campo + 'Dia'] || 0;
+    return data[
+      campo + 'Dia'
+    ] ?? 0;
 
   }
 
 
-  return item[campo] || 0;
+  return data[
+    campo
+  ] ?? 0;
 
 }
 
 
-/* ===================== RENDER GRÁFICOS ===================== */
+/* =========================================================
+   GRÁFICOS
+========================================================= */
 
 function renderCharts(){
 
-  Object.values(chartInstances).forEach(
-    chart => chart.destroy()
-  );
+  Object
+    .values(chartInstances)
+    .forEach(
+      chart =>
+        chart.destroy()
+    );
 
 
   chartInstances = {};
 
 
   const isDark =
-    document.documentElement
-      .getAttribute('data-theme') === 'dark';
+    document
+      .documentElement
+      .getAttribute(
+        'data-theme'
+      ) === 'dark';
 
 
   Chart.defaults.color =
-    isDark ? '#94a2b6' : '#66738a';
+    isDark
+      ? '#94a2b6'
+      : '#66738a';
 
 
-  const getVal = item =>
-    getModeValue(item,'hon20');
+  const getVal =
+    item =>
+      getValue(
+        item,
+        'hon20'
+      );
 
 
   const colors = [
@@ -1339,121 +1582,128 @@ function renderCharts(){
   ];
 
 
-  const createDoughnut =
-    (id,title,labels,data) => {
+  function createDoughnut(
+    id,
+    title,
+    labels,
+    data
+  ){
 
-      const ctx =
-        document.getElementById(id);
-
-
-      if(!ctx) return;
-
-
-      chartInstances[id] =
-        new Chart(
-          ctx,
-          {
-
-            type:'doughnut',
-
-            data:{
-
-              labels,
-
-              datasets:[{
-
-                data,
-
-                backgroundColor:colors,
-
-                borderWidth:
-                  isDark ? 2 : 1,
-
-                borderColor:
-                  isDark ?
-                  '#151f2e' :
-                  '#fff'
-
-              }]
-
-            },
+    const ctx =
+      document.getElementById(
+        id
+      );
 
 
-            options:{
-
-              responsive:true,
-
-              maintainAspectRatio:false,
+    if(!ctx){
+      return;
+    }
 
 
-              plugins:{
+    chartInstances[id] =
+      new Chart(
+        ctx,
+        {
 
-                title:{
+          type:'doughnut',
 
-                  display:true,
+          data:{
 
-                  text:title,
+            labels,
 
+            datasets:[{
+
+              data,
+
+              backgroundColor:
+                colors,
+
+              borderWidth:
+                isDark
+                  ? 2
+                  : 1,
+
+              borderColor:
+                isDark
+                  ? '#151f2e'
+                  : '#fff'
+
+            }]
+
+          },
+
+          options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+
+              title:{
+
+                display:true,
+
+                text:title,
+
+                font:{
+                  size:14,
+                  family:'Inter',
+                  weight:'800'
+                },
+
+                color:
+                  isDark
+                    ? '#e9eef6'
+                    : '#16365c'
+
+              },
+
+              legend:{
+
+                position:'bottom',
+
+                labels:{
+                  boxWidth:10,
                   font:{
-                    size:14,
-                    family:'Inter',
-                    weight:'800'
-                  },
-
-                  color:
-                    isDark ?
-                    '#e9eef6' :
-                    '#16365c'
-
-                },
-
-
-                legend:{
-
-                  position:'bottom',
-
-                  labels:{
-                    boxWidth:10,
-                    font:{
-                      size:11
-                    }
+                    size:11
                   }
+                }
 
-                },
+              },
 
+              tooltip:{
 
-                tooltip:{
+                callbacks:{
 
-                  callbacks:{
+                  label:function(context){
 
-                    label:function(context){
-
-                      const val =
-                        context.raw || 0;
-
-
-                      const sum =
-                        context.chart
-                          ._metasets[
-                            context.datasetIndex
-                          ]
-                          .total;
+                    const val =
+                      context.raw || 0;
 
 
-                      const pct =
-                        sum > 0
-                          ?
-                        (
-                          (val * 100) / sum
-                        ).toFixed(1) + '%'
-                          :
-                        '0%';
+                    const sum =
+                      context
+                        .chart
+                        ._metasets[
+                          context.datasetIndex
+                        ]
+                        .total;
 
 
-                      return
-                        ` ${pct} - ${BRL.format(val)}`;
+                    const pct =
+                      sum > 0
+                        ? (
+                            val * 100 /
+                            sum
+                          ).toFixed(1) +
+                          '%'
+                        : '0%';
 
-                    }
+
+                    return `
+                      ${pct} - ${BRL.format(val)}
+                    `;
 
                   }
 
@@ -1465,45 +1715,53 @@ function renderCharts(){
 
           }
 
-        );
+        }
+      );
 
-    };
+  }
 
 
-  /* =====================
+  /* =====================================================
      GRÁFICO PRINCIPAL
-  ===================== */
+  ===================================================== */
 
   const mainLabels = [];
 
   const mainData = [];
 
 
-  globalGroups.forEach(g => {
+  globalGroups.forEach(
+    g => {
 
-    const tp =
-      g.tipo.toLowerCase();
-
-
-    const isStrictJudicial =
-      tp.includes('judicial') &&
-      !tp.includes('pré');
+      const tp =
+        g.tipo.toLowerCase();
 
 
-    if(
-      !isStrictJudicial &&
-      getModeValue(g.subtotal,'hon20') > 0
-    ){
+      const isStrictJudicial =
+        tp.includes('judicial') &&
+        !tp.includes('pré');
 
-      mainLabels.push(g.tipo);
 
-      mainData.push(
-        getVal(g.subtotal)
-      );
+      if(
+        !isStrictJudicial &&
+        g.subtotal.hon20 > 0
+      ){
+
+        mainLabels.push(
+          g.tipo
+        );
+
+
+        mainData.push(
+          getVal(
+            g.subtotal
+          )
+        );
+
+      }
 
     }
-
-  });
+  );
 
 
   createDoughnut(
@@ -1514,45 +1772,65 @@ function renderCharts(){
   );
 
 
-  /* =====================
-     GRÁFICOS DAS CATEGORIAS
-  ===================== */
+  /* =====================================================
+     GRÁFICOS DOS GRUPOS
+  ===================================================== */
 
-  globalGroups.forEach((g,idx) => {
+  globalGroups.forEach(
+    (
+      g,
+      idx
+    ) => {
 
-    const canvasId =
-      `chartGrp_${idx}`;
-
-
-    if(document.getElementById(canvasId)){
-
-      const labels =
-        g.items.map(i => i.nome);
+      const canvasId =
+        `chartGrp_${idx}`;
 
 
-      const data =
-        g.items.map(i => getVal(i));
+      if(
+        document.getElementById(
+          canvasId
+        )
+      ){
+
+        const labels =
+          g.items.map(
+            i => i.nome
+          );
 
 
-      if(data.some(v => v > 0)){
+        const data =
+          g.items.map(
+            i =>
+              getVal(i)
+          );
 
-        createDoughnut(
-          canvasId,
-          g.tipo,
-          labels,
-          data
-        );
+
+        if(
+          data.some(
+            v => v > 0
+          )
+        ){
+
+          createDoughnut(
+            canvasId,
+            g.tipo,
+            labels,
+            data
+          );
+
+        }
 
       }
 
     }
-
-  });
+  );
 
 }
 
 
-/* ===================== RENDER HERO ===================== */
+/* =========================================================
+   HERO
+========================================================= */
 
 function renderHero(){
 
@@ -1560,7 +1838,9 @@ function renderHero(){
     'Potencial Total';
 
 
-  if(viewMode === 'mensal'){
+  if(
+    viewMode === 'mensal'
+  ){
 
     labelTop =
       'Potencial Mensal';
@@ -1568,7 +1848,9 @@ function renderHero(){
   }
 
 
-  if(viewMode === 'diario'){
+  if(
+    viewMode === 'diario'
+  ){
 
     labelTop =
       'Estimativa Diária';
@@ -1576,229 +1858,309 @@ function renderHero(){
   }
 
 
-  /*
-    CARD MANTIDO COM O MESMO VISUAL ORIGINAL.
-    NÃO EXIBE AS DUAS NOVAS COLUNAS.
-  */
+  function createCardHtml(
+    title,
+    data,
+    customClass = ''
+  ){
 
-  const createCardHtml =
-    (title,data,customClass='') => {
-
-
-      const valPrincipal =
-        getModeValue(data,'hon20');
-
-
-      const valEfic25 =
-        getModeValue(data,'efic25');
+    const valPrincipal =
+      getValue(
+        data,
+        'hon20'
+      );
 
 
-      const valEfic20 =
-        getModeValue(data,'efic20');
+    const valEfic25 =
+      getValue(
+        data,
+        'efic25'
+      );
 
 
-      const valTotal =
-        getModeValue(data,'total');
+    const valEfic20 =
+      getValue(
+        data,
+        'efic20'
+      );
 
 
-      const valBase =
-        getModeValue(data,'base');
+    const valTotal =
+      getValue(
+        data,
+        'total'
+      );
 
 
-      return `
-
-        <div class="pcard ${customClass}">
-
-          <div class="p-lab">
-            ${title}
-            <span style="text-transform:none;opacity:0.7;">
-              (${labelTop})
-            </span>
-          </div>
+    const valBase =
+      getValue(
+        data,
+        'base'
+      );
 
 
-          <div class="p-val">
-            ${BRL.format(valPrincipal)}
-          </div>
+    return `
 
+      <div class="pcard ${customClass}">
 
-          <div class="p-val-efic">
-            <span>Eficiência 25%</span>
-            ${BRL.format(valEfic25)}
-          </div>
+        <div class="p-lab">
 
+          ${title}
 
-          <div class="p-val-efic last">
-            <span>Eficiência 20%</span>
-            ${BRL.format(valEfic20)}
-          </div>
+          <span
+            style="
+              text-transform:none;
+              opacity:0.7;
+            ">
 
+            (${labelTop})
 
-          <div class="p-sub highlight">
-            <span>Negociado Projeto</span>
-            <b>${BRL.format(valTotal)}</b>
-          </div>
-
-
-          <div class="p-sub">
-            <span>Contratos</span>
-            <b>${INT.format(valBase)}</b>
-          </div>
-
-
-          <div class="p-sub">
-            <span>Hon. 20% Base</span>
-            <b>${BRL.format(valPrincipal)}</b>
-          </div>
-
-
-          <div class="p-sub">
-            <span>Efic. 25% Base</span>
-            <b>${BRL.format(valEfic25)}</b>
-          </div>
-
-
-          <div class="p-sub">
-            <span>Efic. 20% Base</span>
-            <b>${BRL.format(valEfic20)}</b>
-          </div>
+          </span>
 
         </div>
 
-      `;
 
-    };
+        <div class="p-val">
+
+          ${BRL.format(
+            valPrincipal
+          )}
+
+        </div>
 
 
-  /* =====================
+        <div class="p-val-efic">
+
+          <span>
+            Eficiência 25%
+          </span>
+
+          ${BRL.format(
+            valEfic25
+          )}
+
+        </div>
+
+
+        <div class="p-val-efic last">
+
+          <span>
+            Eficiência 20%
+          </span>
+
+          ${BRL.format(
+            valEfic20
+          )}
+
+        </div>
+
+
+        <div class="p-sub highlight">
+
+          <span>
+            Negociado Projeto
+          </span>
+
+          <b>
+            ${BRL.format(
+              valTotal
+            )}
+          </b>
+
+        </div>
+
+
+        <div class="p-sub">
+
+          <span>
+            Contratos
+          </span>
+
+          <b>
+            ${INT.format(
+              valBase
+            )}
+          </b>
+
+        </div>
+
+
+        <div class="p-sub">
+
+          <span>
+            Hon. 20% Base
+          </span>
+
+          <b>
+            ${BRL.format(
+              valPrincipal
+            )}
+          </b>
+
+        </div>
+
+
+        <div class="p-sub">
+
+          <span>
+            Efic. 25% Base
+          </span>
+
+          <b>
+            ${BRL.format(
+              valEfic25
+            )}
+          </b>
+
+        </div>
+
+
+        <div class="p-sub">
+
+          <span>
+            Efic. 20% Base
+          </span>
+
+          <b>
+            ${BRL.format(
+              valEfic20
+            )}
+          </b>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =====================================================
      TOTAL GERAL
-  ===================== */
+  ===================================================== */
 
   const geral = {
 
     base:0,
+
     contratosParcelas:0,
+
     parcelas:0,
+
     contratosEncargos:0,
+
     encargos:0,
+
     total:0,
+
     hon20:0,
+
     efic25:0,
-    efic20:0,
 
-    baseMes:0,
-    contratosParcelasMes:0,
-    parcelasMes:0,
-    contratosEncargosMes:0,
-    encargosMes:0,
-    totalMes:0,
-    hon20Mes:0,
-    efic25Mes:0,
-    efic20Mes:0,
-
-    baseDia:0,
-    contratosParcelasDia:0,
-    parcelasDia:0,
-    contratosEncargosDia:0,
-    encargosDia:0,
-    totalDia:0,
-    hon20Dia:0,
-    efic25Dia:0,
-    efic20Dia:0
+    efic20:0
 
   };
 
 
-  globalGroups.forEach(g => {
+  globalGroups.forEach(
+    g => {
 
-    const tp =
-      g.tipo.toLowerCase();
-
-
-    /*
-      EXCLUI Judicial e Pré Judicial
-      do Total Geral
-    */
-
-    const isJudicial =
-      tp.includes('judicial');
+      const tp =
+        g.tipo.toLowerCase();
 
 
-    if(!isJudicial){
-
-      Object.keys(geral).forEach(key => {
-
-        if(
-          typeof geral[key] === 'number' &&
-          typeof g.subtotal[key] === 'number'
-        ){
-
-          geral[key] +=
-            g.subtotal[key];
-
-        }
-
-      });
-
-    }
-
-  });
+      const isJudicial =
+        tp.includes('judicial');
 
 
-  const getGroupData =
-    keyword => {
+      if(!isJudicial){
 
-      const g =
-        globalGroups.find(
-          x =>
-            x.tipo
-              .toLowerCase()
-              .includes(keyword)
-        );
+        geral.base +=
+          g.subtotal.base;
 
+        geral.contratosParcelas +=
+          g.subtotal.contratosParcelas;
 
-      if(g){
+        geral.parcelas +=
+          g.subtotal.parcelas;
 
-        return g.subtotal;
+        geral.contratosEncargos +=
+          g.subtotal.contratosEncargos;
+
+        geral.encargos +=
+          g.subtotal.encargos;
+
+        geral.total +=
+          g.subtotal.total;
+
+        geral.hon20 +=
+          g.subtotal.hon20;
+
+        geral.efic25 +=
+          g.subtotal.efic25;
+
+        geral.efic20 +=
+          g.subtotal.efic20;
 
       }
 
+    }
+  );
 
-      return {
 
-        base:0,
-        contratosParcelas:0,
-        parcelas:0,
-        contratosEncargos:0,
-        encargos:0,
-        total:0,
-        hon20:0,
-        efic25:0,
-        efic20:0,
+  addPeriodValues(
+    geral
+  );
 
-        baseMes:0,
-        contratosParcelasMes:0,
-        parcelasMes:0,
-        contratosEncargosMes:0,
-        encargosMes:0,
-        totalMes:0,
-        hon20Mes:0,
-        efic25Mes:0,
-        efic20Mes:0,
 
-        baseDia:0,
-        contratosParcelasDia:0,
-        parcelasDia:0,
-        contratosEncargosDia:0,
-        encargosDia:0,
-        totalDia:0,
-        hon20Dia:0,
-        efic25Dia:0,
-        efic20Dia:0
+  /* =====================================================
+     LOCALIZA CATEGORIA
+  ===================================================== */
 
-      };
+  function getGroupData(
+    keyword
+  ){
 
-    };
+    const g =
+      globalGroups.find(
+        x =>
+          x.tipo
+            .toLowerCase()
+            .includes(keyword)
+      );
+
+
+    if(g){
+
+      return g.subtotal;
+
+    }
+
+
+    return addPeriodValues({
+
+      base:0,
+
+      contratosParcelas:0,
+
+      parcelas:0,
+
+      contratosEncargos:0,
+
+      encargos:0,
+
+      total:0,
+
+      hon20:0,
+
+      efic25:0,
+
+      efic20:0
+
+    });
+
+  }
 
 
   const cardsCat = [];
@@ -1816,7 +2178,9 @@ function renderHero(){
   cardsCat.push(
     createCardHtml(
       'Condomínio',
-      getGroupData('condom')
+      getGroupData(
+        'condom'
+      )
     )
   );
 
@@ -1824,7 +2188,9 @@ function renderHero(){
   cardsCat.push(
     createCardHtml(
       'Incorporadora',
-      getGroupData('incorporadora')
+      getGroupData(
+        'incorporadora'
+      )
     )
   );
 
@@ -1832,7 +2198,9 @@ function renderHero(){
   cardsCat.push(
     createCardHtml(
       'Pré Judicial',
-      getGroupData('pré')
+      getGroupData(
+        'pré'
+      )
     )
   );
 
@@ -1841,70 +2209,64 @@ function renderHero(){
     cardsCat.join('');
 
 
-  /* =====================
+  /* =====================================================
      NEGOCIADORES
-  ===================== */
+  ===================================================== */
 
   const cardsNeg = [];
 
 
-  Object.keys(globalNegociadores)
-    .sort()
-    .forEach(nome => {
+  Object
+    .keys(
+      globalNegociadores
+    )
+    .forEach(
+      nome => {
 
-      const data =
-        globalNegociadores[nome];
+        const data =
+          globalNegociadores[
+            nome
+          ];
 
-
-      if(
-        data.total > 0 ||
-        data.base > 0 ||
-        data.hon20 > 0
-      ){
 
         cardsNeg.push(
+
           createCardHtml(
             nome,
             data,
             'negociador'
           )
+
         );
 
       }
+    );
 
-    });
 
-
-  if(cardsNeg.length){
-
-    $('#hero-neg').innerHTML =
-      cardsNeg.join('');
-
-  }
-
-  else{
-
-    $('#hero-neg').innerHTML = `
-      <div class="empty">
-        Nenhum negociador encontrado na planilha.
-      </div>
-    `;
-
-  }
+  $('#hero-neg').innerHTML =
+    cardsNeg.join('');
 
 }
 
 
-/* ===================== RENDER TABELAS ===================== */
+/* =========================================================
+   TABELAS
+========================================================= */
 
 function renderTables(){
 
-  if(!globalGroups.length){
+  if(
+    !globalGroups.length
+  ){
 
     $('#tables').innerHTML = `
+
       <div class="empty">
+
         Nenhum dado encontrado na planilha.
+
       </div>
+
     `;
 
     return;
@@ -1920,207 +2282,418 @@ function renderTables(){
   let html = '';
 
 
-  globalGroups.forEach((g,idx) => {
+  globalGroups.forEach(
+    (
+      g,
+      idx
+    ) => {
 
-    const tipoLower =
-      g.tipo.toLowerCase();
+      const isCondominio =
+        g.tipo
+          .toLowerCase()
+          .includes('condomínio') ||
 
-
-    const isCondominio =
-      tipoLower.includes('condomínio') ||
-      tipoLower.includes('condominio');
-
-
-    html += `
-      <div class="grpname">
-        <span class="chip">
-          ${g.tipo}
-        </span>
-      </div>
-    `;
+        g.tipo
+          .toLowerCase()
+          .includes('condominio');
 
 
-    html += `
-      <div class="group-layout">
-    `;
+      html += `
+
+        <div class="grpname">
+
+          <span class="chip">
+
+            ${g.tipo}
+
+          </span>
+
+        </div>
+
+      `;
 
 
-    /* =====================
-       TABELA
-    ===================== */
+      html += `
 
-    html += `
-      <div class="tblwrap">
+        <div class="group-layout">
 
-        <table>
+      `;
 
-          <thead>
+
+      html += `
+
+        <div class="tblwrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Empreendimento
+                </th>
+
+                <th class="num">
+                  Base
+                </th>
+
+                <th class="num">
+                  Parcelas/Taxas
+                </th>
+
+      `;
+
+
+      if(!isCondominio){
+
+        html += `
+
+          <th class="num">
+            Encargos
+          </th>
+
+        `;
+
+      }
+
+
+      html += `
+
+                <th class="num">
+                  Total
+                </th>
+
+      `;
+
+
+      if(
+        viewMode === 'mensal'
+      ){
+
+        html += `
+
+          <th
+            class="num mth"
+            style="color:var(--brand2)">
+
+            Hon. 20%/mês
+
+          </th>
+
+          <th
+            class="num mth"
+            style="color:var(--good)">
+
+            Efic. 25%/mês
+
+          </th>
+
+          <th
+            class="num mth"
+            style="color:var(--good)">
+
+            Efic. 20%/mês
+
+          </th>
+
+        `;
+
+      }
+
+      else if(
+        viewMode === 'diario'
+      ){
+
+        html += `
+
+          <th
+            class="num mth"
+            style="color:var(--brand2)">
+
+            Hon. 20%/dia
+
+          </th>
+
+          <th
+            class="num mth"
+            style="color:var(--good)">
+
+            Efic. 25%/dia
+
+          </th>
+
+          <th
+            class="num mth"
+            style="color:var(--good)">
+
+            Efic. 20%/dia
+
+          </th>
+
+        `;
+
+      }
+
+      else{
+
+        html += `
+
+          <th
+            class="num"
+            style="color:var(--brand2)">
+
+            Hon. 20%
+
+          </th>
+
+          <th
+            class="num"
+            style="color:var(--good)">
+
+            Efic. 25%
+
+          </th>
+
+          <th
+            class="num"
+            style="color:var(--good)">
+
+            Efic. 20%
+
+          </th>
+
+        `;
+
+      }
+
+
+      html += `
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+      `;
+
+
+      g.items.forEach(
+        it => {
+
+          const vBase =
+            getValue(
+              it,
+              'base'
+            );
+
+
+          const vParcelas =
+            getValue(
+              it,
+              'parcelas'
+            );
+
+
+          const vEncargos =
+            getValue(
+              it,
+              'encargos'
+            );
+
+
+          const vTotal =
+            getValue(
+              it,
+              'total'
+            );
+
+
+          const vHon =
+            getValue(
+              it,
+              'hon20'
+            );
+
+
+          const vEfic25 =
+            getValue(
+              it,
+              'efic25'
+            );
+
+
+          const vEfic20 =
+            getValue(
+              it,
+              'efic20'
+            );
+
+
+          html += `
 
             <tr>
 
-              <th>Empreendimento</th>
+              <td>
+                ${it.nome}
+              </td>
 
-              <th class="num">Base</th>
+              <td class="num">
 
-              <th class="num">
-                Parcelas/Taxas
-              </th>
-    `;
+                ${INT.format(
+                  vBase
+                )}
 
+              </td>
 
-    if(!isCondominio){
+              <td class="num">
 
-      html += `
-        <th class="num">
-          Encargos
-        </th>
-      `;
+                ${BRL.format(
+                  vParcelas
+                )}
 
-    }
+              </td>
 
-
-    html += `
-      <th class="num">
-        Total
-      </th>
-    `;
+          `;
 
 
-    if(viewMode === 'mensal'){
+          if(!isCondominio){
 
-      html += `
+            html += `
 
-        <th
-          class="num mth"
-          style="color:var(--brand2)">
-          Hon. 20%/mês
-        </th>
+              <td class="num">
 
-        <th
-          class="num mth"
-          style="color:var(--good)">
-          Efic. 25%/mês
-        </th>
+                ${BRL.format(
+                  vEncargos
+                )}
 
-        <th
-          class="num mth"
-          style="color:var(--good)">
-          Efic. 20%/mês
-        </th>
+              </td>
 
-      `;
+            `;
 
-    }
-
-    else if(viewMode === 'diario'){
-
-      html += `
-
-        <th
-          class="num mth"
-          style="color:var(--brand2)">
-          Hon. 20%/dia
-        </th>
-
-        <th
-          class="num mth"
-          style="color:var(--good)">
-          Efic. 25%/dia
-        </th>
-
-        <th
-          class="num mth"
-          style="color:var(--good)">
-          Efic. 20%/dia
-        </th>
-
-      `;
-
-    }
-
-    else{
-
-      html += `
-
-        <th
-          class="num"
-          style="color:var(--brand2)">
-          Hon. 20%
-        </th>
-
-        <th
-          class="num"
-          style="color:var(--good)">
-          Efic. 25%
-        </th>
-
-        <th
-          class="num"
-          style="color:var(--good)">
-          Efic. 20%
-        </th>
-
-      `;
-
-    }
+          }
 
 
-    html += `
+          html += `
+
+              <td class="num">
+
+                ${BRL.format(
+                  vTotal
+                )}
+
+              </td>
+
+              <td
+                class="num ${isFrac ? 'mth' : ''}"
+                style="font-weight:600;">
+
+                ${BRL.format(
+                  vHon
+                )}
+
+              </td>
+
+              <td
+                class="num ${isFrac ? 'mth' : ''}"
+                style="font-weight:600;">
+
+                ${BRL.format(
+                  vEfic25
+                )}
+
+              </td>
+
+              <td
+                class="num ${isFrac ? 'mth' : ''}"
+                style="font-weight:600;">
+
+                ${BRL.format(
+                  vEfic20
+                )}
+
+              </td>
+
             </tr>
 
-          </thead>
+          `;
 
-          <tbody>
-    `;
-
-
-    /* =====================
-       LINHAS
-    ===================== */
-
-    g.items.forEach(it => {
+        }
+      );
 
 
-      const vBase =
-        getModeValue(it,'base');
+      const subBase =
+        getValue(
+          g.subtotal,
+          'base'
+        );
 
 
-      const vParcelas =
-        getModeValue(it,'parcelas');
+      const subParcelas =
+        getValue(
+          g.subtotal,
+          'parcelas'
+        );
 
 
-      const vEncargos =
-        getModeValue(it,'encargos');
+      const subEncargos =
+        getValue(
+          g.subtotal,
+          'encargos'
+        );
 
 
-      const vTotal =
-        getModeValue(it,'total');
+      const subTotal =
+        getValue(
+          g.subtotal,
+          'total'
+        );
 
 
-      const vHon =
-        getModeValue(it,'hon20');
+      const subHon =
+        getValue(
+          g.subtotal,
+          'hon20'
+        );
 
 
-      const vEfic25 =
-        getModeValue(it,'efic25');
+      const subEfic25 =
+        getValue(
+          g.subtotal,
+          'efic25'
+        );
 
 
-      const vEfic20 =
-        getModeValue(it,'efic20');
+      const subEfic20 =
+        getValue(
+          g.subtotal,
+          'efic20'
+        );
 
 
       html += `
 
-        <tr>
+        <tr class="subtotal">
 
-          <td>${it.nome}</td>
-
-          <td class="num">
-            ${INT.format(vBase)}
+          <td class="tp">
+            Total
           </td>
 
           <td class="num">
-            ${BRL.format(vParcelas)}
+
+            ${INT.format(
+              subBase
+            )}
+
+          </td>
+
+          <td class="num">
+
+            ${BRL.format(
+              subParcelas
+            )}
+
           </td>
 
       `;
@@ -2131,7 +2704,11 @@ function renderTables(){
         html += `
 
           <td class="num">
-            ${BRL.format(vEncargos)}
+
+            ${BRL.format(
+              subEncargos
+            )}
+
           </td>
 
         `;
@@ -2142,30 +2719,37 @@ function renderTables(){
       html += `
 
           <td class="num">
-            ${BRL.format(vTotal)}
-          </td>
 
-          <td
-            class="num ${isFrac ? 'mth' : ''}"
-            style="font-weight:600;">
-
-            ${BRL.format(vHon)}
+            ${BRL.format(
+              subTotal
+            )}
 
           </td>
 
           <td
-            class="num ${isFrac ? 'mth' : ''}"
-            style="font-weight:600;">
+            class="num ${isFrac ? 'mth' : ''}">
 
-            ${BRL.format(vEfic25)}
+            ${BRL.format(
+              subHon
+            )}
 
           </td>
 
           <td
-            class="num ${isFrac ? 'mth' : ''}"
-            style="font-weight:600;">
+            class="num ${isFrac ? 'mth' : ''}">
 
-            ${BRL.format(vEfic20)}
+            ${BRL.format(
+              subEfic25
+            )}
+
+          </td>
+
+          <td
+            class="num ${isFrac ? 'mth' : ''}">
+
+            ${BRL.format(
+              subEfic20
+            )}
 
           </td>
 
@@ -2173,106 +2757,8 @@ function renderTables(){
 
       `;
 
-    });
-
-
-    /* =====================
-       SUBTOTAL
-    ===================== */
-
-    const subBase =
-      getModeValue(g.subtotal,'base');
-
-
-    const subParcelas =
-      getModeValue(g.subtotal,'parcelas');
-
-
-    const subEncargos =
-      getModeValue(g.subtotal,'encargos');
-
-
-    const subTotal =
-      getModeValue(g.subtotal,'total');
-
-
-    const subHon =
-      getModeValue(g.subtotal,'hon20');
-
-
-    const subEfic25 =
-      getModeValue(g.subtotal,'efic25');
-
-
-    const subEfic20 =
-      getModeValue(g.subtotal,'efic20');
-
-
-    html += `
-
-      <tr class="subtotal">
-
-        <td class="tp">
-          Total
-        </td>
-
-        <td class="num">
-          ${INT.format(subBase)}
-        </td>
-
-        <td class="num">
-          ${BRL.format(subParcelas)}
-        </td>
-
-    `;
-
-
-    if(!isCondominio){
 
       html += `
-
-        <td class="num">
-          ${BRL.format(subEncargos)}
-        </td>
-
-      `;
-
-    }
-
-
-    html += `
-
-        <td class="num">
-          ${BRL.format(subTotal)}
-        </td>
-
-        <td
-          class="num ${isFrac ? 'mth' : ''}">
-
-          ${BRL.format(subHon)}
-
-        </td>
-
-        <td
-          class="num ${isFrac ? 'mth' : ''}">
-
-          ${BRL.format(subEfic25)}
-
-        </td>
-
-        <td
-          class="num ${isFrac ? 'mth' : ''}">
-
-          ${BRL.format(subEfic20)}
-
-        </td>
-
-      </tr>
-
-    `;
-
-
-    html += `
 
           </tbody>
 
@@ -2280,138 +2766,170 @@ function renderTables(){
 
       </div>
 
-    `;
+      `;
 
 
-    /* =====================
-       GRÁFICO
-    ===================== */
+      html += `
 
-    html += `
+        <div class="chart-card">
 
-      <div class="chart-card">
+          <div class="chart-wrapper">
 
-        <div class="chart-wrapper">
+            <canvas
+              id="chartGrp_${idx}">
+            </canvas>
 
-          <canvas
-            id="chartGrp_${idx}">
-          </canvas>
+          </div>
 
         </div>
 
-      </div>
-
-    `;
+      `;
 
 
-    html += `
-      </div>
-    `;
+      html += `
 
-  });
+        </div>
+
+      `;
+
+    }
+  );
 
 
-  $('#tables').innerHTML = html;
+  $('#tables').innerHTML =
+    html;
 
 }
 
 
-/* ===================== STATUS ===================== */
+/* =========================================================
+   STATUS
+========================================================= */
 
-function setStatus(kind,msg){
+function setStatus(
+  kind,
+  msg
+){
 
   const dotClass =
     kind === 'ok'
       ? ''
-      :
-    kind === 'load'
-      ? 'load'
-      : 'bad';
+      : kind === 'load'
+        ? 'load'
+        : 'bad';
 
 
   $('#status').innerHTML = `
-    <span class="dot ${dotClass}"></span>
+
+    <span
+      class="dot ${dotClass}">
+    </span>
+
     ${msg}
+
   `;
 
 }
 
 
-/* ===================== BOTÃO VISÃO ===================== */
+/* =========================================================
+   ALTERAR VISÃO
+========================================================= */
 
-$('#btnToggleMode').onclick = e => {
+$('#btnToggleMode').onclick =
+  e => {
 
+    if(
+      viewMode === 'total'
+    ){
 
-  if(viewMode === 'total'){
+      viewMode =
+        'mensal';
 
-    viewMode = 'mensal';
+      e.target.innerHTML =
+        '☀️ Ver Diário';
 
-    e.target.innerHTML =
-      '☀️ Ver Diário';
+    }
 
-  }
+    else if(
+      viewMode === 'mensal'
+    ){
 
+      viewMode =
+        'diario';
 
-  else if(viewMode === 'mensal'){
+      e.target.innerHTML =
+        '💰 Ver Total';
 
-    viewMode = 'diario';
+    }
 
-    e.target.innerHTML =
-      '💰 Ver Total';
+    else{
 
-  }
+      viewMode =
+        'total';
 
+      e.target.innerHTML =
+        '📅 Ver Mensal';
 
-  else{
-
-    viewMode = 'total';
-
-    e.target.innerHTML =
-      '📅 Ver Mensal';
-
-  }
-
-
-  renderHero();
-
-  renderTables();
-
-  renderCharts();
-
-};
+    }
 
 
-/* ===================== ATUALIZAR ===================== */
+    renderHero();
+
+    renderTables();
+
+    renderCharts();
+
+  };
+
+
+/* =========================================================
+   ATUALIZAR
+========================================================= */
 
 $('#btnRefresh').onclick =
   carregar;
 
 
-/* ===================== TEMA ===================== */
+/* =========================================================
+   TEMA
+========================================================= */
 
-$('#btnTheme').onclick = () => {
+$('#btnTheme').onclick =
+  () => {
 
-  const dark =
-    document.documentElement
-      .getAttribute('data-theme') === 'dark';
-
-
-  document.documentElement.setAttribute(
-    'data-theme',
-    dark ? 'light' : 'dark'
-  );
-
-
-  $('#btnTheme').textContent =
-    dark ? '🌙' : '☀️';
+    const dark =
+      document
+        .documentElement
+        .getAttribute(
+          'data-theme'
+        ) === 'dark';
 
 
-  renderCharts();
+    document
+      .documentElement
+      .setAttribute(
+        'data-theme',
+        dark
+          ? 'light'
+          : 'dark'
+      );
 
-};
+
+    $('#btnTheme').textContent =
+      dark
+        ? '🌙'
+        : '☀️';
 
 
-/* ===================== CARREGAR ===================== */
+    renderCharts();
+
+  };
+
+
+/* =========================================================
+   CARREGAR
+========================================================= */
 
 async function carregar(){
 
@@ -2428,11 +2946,27 @@ async function carregar(){
 
 
     const matrix =
-      parseCSV(csvText);
+      parseCSV(
+        csvText
+      );
 
 
     globalGroups =
-      buildGroups(matrix);
+      buildGroups(
+        matrix
+      );
+
+
+    console.log(
+      'Grupos:',
+      globalGroups
+    );
+
+
+    console.log(
+      'Negociadores:',
+      globalNegociadores
+    );
 
 
     renderHero();
@@ -2447,26 +2981,32 @@ async function carregar(){
 
 
     setStatus(
+
       'ok',
-      `<b>Atualizado</b> em ${
-        now.toLocaleDateString('pt-BR')
-      } às ${
-        now.toLocaleTimeString(
-          'pt-BR',
-          {
-            hour:'2-digit',
-            minute:'2-digit'
-          }
-        )
-      }`
+
+      `<b>Atualizado</b>
+       em
+       ${now.toLocaleDateString(
+         'pt-BR'
+       )}
+       às
+       ${now.toLocaleTimeString(
+         'pt-BR',
+         {
+           hour:'2-digit',
+           minute:'2-digit'
+         }
+       )}`
+
     );
 
   }
 
-
   catch(err){
 
-    console.error(err);
+    console.error(
+      err
+    );
 
 
     setStatus(
@@ -2476,9 +3016,13 @@ async function carregar(){
 
 
     $('#tables').innerHTML = `
+
       <div class="err">
+
         ${err.message}
+
       </div>
+
     `;
 
   }
@@ -2486,7 +3030,9 @@ async function carregar(){
 }
 
 
-/* ===================== INICIALIZAÇÃO ===================== */
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
 
 carregar();
 
